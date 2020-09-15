@@ -1,0 +1,86 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'ri_call_market/highcharts.js' %}"></script>
+    <script type="module" src="{% static 'ri_call_market/ri_call_market.js' %}"></script>
+    <script>
+        document.querySelector("#resultId").addEventListener('getPolymerData', function (customEvent) {
+            customEvent.preventDefault();
+            round_payoff.value = this.payoff;
+            $("[id='next_btn']")[0].click();
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    {% with config=subsession.config %}
+
+        {% if config.buy_option %}
+            <h3>bid price: {{ player.bid_price }}<br/>
+            bought: {{ player.bought }}</h3>
+        {% endif %}
+
+        {% if config.sell_option %}
+            <h3>ask price: {{ player.ask_price }}<br/>
+            sold: {{ player.sold }}</h3>
+        {% endif %}
+
+        <h3>clearing price: {{ group.clearing_price }}</h3>
+        <ri-call-market
+            id="resultId"
+            g="{{ config.g }}"
+            k="{{ config.k }}"
+            endowment="{{ config.endowment }}"
+            bonds="{{ config.initial_bonds }}"
+            m="{{ config.m }}"
+            y="{{ config.y }}"
+            q="{{ group.clearing_price }}"
+            {% if config.buy_option %}
+                buy-option
+                bid-price="{{ player.bid_price }}"
+            {% endif %}
+            {% if config.sell_option %}
+                sell-option
+                ask-price="{{ player.ask_price }}"
+            {% endif %}
+            low-value="{{ player.low_val }}"
+            high-value="{{ player.high_val }}"              
+            cost="{{ player.cost }}"
+            is-default="{{ subsession.default }}"
+            bought="{{ bought }}"
+            sold="{{ sold }}"
+            is-result-page
+        ></ri-call-market>
+        <button id="next_btn" class="otree-btn-next btn btn-primary">Submit</button>
+
+    {% endwith %}
+
+    <input type="hidden" name="round_payoff" id="round_payoff"/>
+    {% if form.round_payoff.errors %}
+        <h5>Error in getting payoff for this round</h5>
+    {{ form.round_payoff.errors }}
+    
+{% endif %}
+
+
+{% endblock %}
+
+
+{% block styles %}
+<style>
+    #next_btn {
+        display: none;
+        float: right;
+        margin-right: 5%;
+    }
+</style>   
+{% endblock %}
+
+

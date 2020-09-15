@@ -1,0 +1,115 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    RI-CM
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'ri_call_market/highcharts.js' %}"></script>
+    <script type="module" src="{% static 'ri_call_market/ri_call_market.js' %}"></script>
+    <script>
+        document.querySelector("#rationalInattentionId").addEventListener('getPolymerData', function (customEvent) {
+            width.value = this.precision;
+            cost.value = this.cost;
+            bid_price.value = this.bidPrice;
+            ask_price.value = this.askPrice;
+            m_low.value = this.mLow;
+            m_high.value = this.mHigh;
+            low_val.value = this.lowValue;
+            high_val.value = this.highValue;
+            if (this.step > 2) {
+                // submits bid/ask prices and moves to wait page until received all players' prices
+                $("[id='next_btn']")[0].click();
+            }
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+    
+    {% with config=subsession.config %}
+
+        <h4>Round #{{ round_num }}</h4>
+        <!-- <p><strong>Total endowment:</strong> {{ config.endowment }} credits and {{ config.initial_bonds }} bonds</p> -->
+        <ri-call-market
+                id='rationalInattentionId'
+                g="{{ g }}"
+                k="{{ k }}"
+                endowment="{{ config.endowment }}"
+                bonds="{{ config.initial_bonds }}"
+                m="{{ m }}"
+                y="{{ y }}"
+                q="{{ q }}"
+                {% if config.buy_option %}
+                    buy-option
+                {% endif %}
+                {% if config.sell_option %}
+                    sell-option
+                {% endif %}
+        ></ri-call-market>
+        <button id="next_btn" class="otree-btn-next btn btn-primary">Submit</button>
+    
+    {% endwith %}
+
+    <input type="hidden" name="width" id="width"/>
+    <input type="hidden" name="cost" id="cost"/>
+    <input type="hidden" name="bid_price" id="bid_price"/>
+    <input type="hidden" name="ask_price" id="ask_price"/>
+    <input type="hidden" name="m_low" id="m_low"/>
+    <input type="hidden" name="m_high" id="m_high"/>
+    <input type="hidden" name="low_val" id="low_val"/>
+    <input type="hidden" name="high_val" id="high_val"/>
+
+    {% if form.width.errors %}
+        <h5>Select width of your private information</h5>
+        {{ form.width.errors }}
+    {% endif %}
+    {% if form.bid_price.errors %}
+        <h5>Select the bid price for the bond</h5>
+        {{ form.bid_price.errors }}
+    {% endif %}
+    {% if form.ask_price.errors %}
+        <h5>Select the ask price for the bond</h5>
+        {{ form.ask_price.errors }}
+    {% endif %}
+
+    {% if form.cost.errors %}
+        <h5>Error in getting cost of private info</h5>
+        {{ form.cost.errors }}
+    {% endif %}
+    {% if form.m_low.errors %}
+        <h5>Error in getting m low</h5>
+        {{ form.m_low.errors }}
+    {% endif %}
+    {% if form.m_high.errors %}
+        <h5>Error in getting m high</h5>
+        {{ form.m_high.errors }}
+    {% endif %}
+    {% if form.low_val.errors %}
+        <h5>Error in getting lowest expected value</h5>
+        {{ form.low_val.errors }}
+    {% endif %}
+    {% if form.high_val.errors %}
+        <h5>Error in getting highest expected value</h5>
+        {{ form.high_val.errors }}
+    {% endif %}
+{% endblock %}
+
+{% block styles %}
+<style>
+    .container {
+            margin: 20px;
+            padding: 0 !important;
+        }
+    .otree-body {
+        max-width: none;    
+    }
+    #next_btn {
+        display: none;
+        float: right;
+        margin-right: 5%;
+    }
+</style>   
+{% endblock %}
