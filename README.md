@@ -1,1 +1,1 @@
-# ri_call_market
+# Rational Inattention - Call Market
