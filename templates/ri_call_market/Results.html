@@ -35,12 +35,12 @@
         <h3>clearing price: {{ group.clearing_price }}</h3>
         <ri-call-market
             id="resultId"
-            g="{{ config.g }}"
-            k="{{ config.k }}"
+            g="{{ g }}"
+            k="{{ k }}"
             endowment="{{ config.endowment }}"
             bonds="{{ config.initial_bonds }}"
-            m="{{ config.m }}"
-            y="{{ config.y }}"
+            m="{{ m }}"
+            y="{{ y }}"
             q="{{ group.clearing_price }}"
             {% if config.buy_option %}
                 buy-option
@@ -53,9 +53,13 @@
             low-value="{{ player.low_val }}"
             high-value="{{ player.high_val }}"              
             cost="{{ player.cost }}"
-            is-default="{{ subsession.default }}"
-            bought="{{ bought }}"
-            sold="{{ sold }}"
+            is-default="{{ default }}"
+            {% if player.bought %}
+                bought
+            {% endif %}
+            {% if player.sold %}
+                sold
+            {% endif %}
             is-result-page
         ></ri-call-market>
         <button id="next_btn" class="otree-btn-next btn btn-primary">Submit</button>

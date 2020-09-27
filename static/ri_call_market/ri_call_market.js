@@ -40,8 +40,14 @@ class RICallMarket extends PolymerElement {
             askPrice: Number,
             expectedVal: Number,
             default: Boolean,
-            bought: Boolean,
-            sold: Boolean,
+            bought: {
+                type: Boolean,
+                value: false,
+            },
+            sold: {
+                type: Boolean,
+                value: false,
+            },
             bondPayment: Number,
             numBonds: Number,
             payoff: Number,

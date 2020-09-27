@@ -46,7 +46,13 @@ class Results(Page):
         return {
             'bought': self.player.get_bought(),
             'sold': self.player.get_sold(),
+            'g': self.subsession.get_g(),
+            'k': self.subsession.get_k(),
+            'm': self.subsession.get_m(),
+            'y': self.subsession.get_y(),
             'q': self.subsession.get_q(),
-        }
+            'expected_value': self.subsession.get_expected_value(),
+            'default': self.subsession.get_default(),        
+            }
 
 page_sequence = [MainPage, ResultsWaitPage, Results]

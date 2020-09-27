@@ -26,6 +26,10 @@ class BuysellSlider extends PolymerElement {
             animatePrice: {
                 type: Boolean,
             },
+            disableSelect: {
+                type: Boolean,
+                value: true,
+            }
         }
     }
 
@@ -155,6 +159,7 @@ class BuysellSlider extends PolymerElement {
                     disabled="[[ disableSelect ]]"
                 ></paper-range-slider>
             </div>
+            <div>disabled slider? [[ disableSelect ]] </div>
         `;
     }
 

@@ -26,7 +26,7 @@ def parse_config(config):
         for row in rows:
             rounds.append({
                 'round': int(row['round']) if row['round'] else 0,
-                'endowment': int(row['endowment']) if row.get('endowment') else 100,
+                'endowment': float(row['endowment']) if row.get('endowment') else 100,
                 'initial_bonds': int(row['initial_bonds']) if row.get('initial_bonds') else 1,
                 'buy_option': False if row.get('buy_option') == 'False' else True,
                 'sell_option': False if row.get('sell_option') == 'False' else True,
@@ -173,12 +173,12 @@ class Player(BasePlayer):
     round_payoff = models.FloatField(initial=100)
 
     def get_bought(self):
-        self.bought = self.bid_price > self.group.clearing_price
+        self.bought = self.subsession.buy_option and self.bid_price > self.group.clearing_price
         self.save()
         return self.bought
     
     def get_sold(self):
-        self.sold = self.ask_price > self.group.clearing_price
+        self.sold = self.subsession.sell_option and self.ask_price > self.group.clearing_price
         self.save()
         return self.sold
 

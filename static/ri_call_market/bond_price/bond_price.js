@@ -122,15 +122,15 @@ class BondPrice extends PolymerElement {
         <img src="../../../../../static/rational_inattention/shared/sell_marker.png" alt="buy marker failed to load :(">
         <span class="sell val">(ask)</span>.</p>
             
-           <!-- <p>Assuming you don't care about uncertainty, you would expect:</p> -->
-            <p>Lowest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
-            * [[ mLow ]] = <span class="low val">[[ lowValue ]]</span></p>
-            <p>Highest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
-            * [[ mHigh ]] = <span class="high val">[[ highValue ]]</span></p>
+        <p>Lowest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
+        * [[ mLow ]] = <span class="low val">[[ lowValue ]]</span></p>
+        <p>Highest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
+        * [[ mHigh ]] = <span class="high val">[[ highValue ]]</span></p>
 
             <buysell-slider
                 class="slider"
                 m="[[ m ]]"
+                max="[[ endowment ]]"
                 low-value="[[ lowValue ]]"
                 high-value="[[ highValue ]]"
                 buy-option="[[ buyOption ]]"

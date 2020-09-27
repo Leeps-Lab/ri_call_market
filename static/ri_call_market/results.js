@@ -32,7 +32,7 @@ class Results extends PolymerElement {
             },
             payoff: {
                 type: Number,
-                computed: '_getPayoff(bought, sold, endowment, q, cost)',
+                computed: '_getPayoff(bought, sold, endowment, q, cost, bondPayment)',
                 notify: true,
                 reflectToAttribute: true,
             },
@@ -155,7 +155,6 @@ class Results extends PolymerElement {
     }
 
     _getDefaultColor() {
-        console.log('reuslts', this.buyOption, this.sellOption, this.bought, this.sold, this.q, this.numBonds)
         return this.isDefault ? 'def' : 'non-def';
     }
 
@@ -171,12 +170,12 @@ class Results extends PolymerElement {
         return this.isDefault ? m : 100; // 0 if match
     }
 
-    _getPayoff(bought, sold, endowment, q, cost) {
+    _getPayoff(bought, sold, endowment, q, cost, bondPayment) {
         // neither bought nor sold
-        let val = endowment + this.bondPayment - cost;
+        let val = endowment + bondPayment - cost;
         // bought
         if(bought) {
-            val = endowment + (2 * this.bondPayment) - cost - q;
+            val = endowment + (2 * bondPayment) - cost - q;
         }
         // sold
         if (sold) {
