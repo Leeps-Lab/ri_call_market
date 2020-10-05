@@ -3,7 +3,8 @@ import './public_info/public_info.js';
 import './info_precision/info_precision.js';
 import './bond_price/bond_price.js';
 import './polymer-elements/paper-button.js';
-import './results.js';
+import './results/results.js';
+import './results/supply_demand_graph.js';
 class RICallMarket extends PolymerElement {
 
     static get properties() {
@@ -56,6 +57,14 @@ class RICallMarket extends PolymerElement {
                 value: 'Next',
             },
             isResultPage: Boolean,
+            bids: {
+                type: Array,
+                value: []
+            },
+            asks: {
+                type: Array,
+                value: []
+            },
         }
     }
     static get template() {
@@ -112,12 +121,16 @@ class RICallMarket extends PolymerElement {
                         sell-price="{{ askPrice }}"
                         expected-value="{{ expectedVal }}"
                         disable-select="[[ _disableStep(step, 2) ]]"
-                        hide-before-submit="{{ _hideStep(step, 3) }}"
-                        animate-price="[[ _animatePrice(2) ]]"
                     ></bond-price>
                 </div>
             </div>
             <div class="results-page" hidden$="{{ _hidePage() }}">
+                <supply-demand-graph
+                    bids="[[ bids ]]"
+                    asks="[[ asks ]]"
+                    buy-price="[[ bidPrice ]]"
+                    sell-price="[[ askPrice ]]"
+                ></supply-demand-graph>
                 <results-page
                     endowment="[[ endowment ]]"
                     bonds="[[ bonds ]]"

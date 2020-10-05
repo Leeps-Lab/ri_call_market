@@ -17,22 +17,9 @@
     </script>
 
 {% endblock %}
-
 {% block content %}
 
     {% with config=subsession.config %}
-
-        {% if config.buy_option %}
-            <h3>bid price: {{ player.bid_price }}<br/>
-            bought: {{ player.bought }}</h3>
-        {% endif %}
-
-        {% if config.sell_option %}
-            <h3>ask price: {{ player.ask_price }}<br/>
-            sold: {{ player.sold }}</h3>
-        {% endif %}
-
-        <h3>clearing price: {{ group.clearing_price }}</h3>
         <ri-call-market
             id="resultId"
             g="{{ g }}"
@@ -45,10 +32,12 @@
             {% if config.buy_option %}
                 buy-option
                 bid-price="{{ player.bid_price }}"
+                bids="{{ bids }}"
             {% endif %}
             {% if config.sell_option %}
                 sell-option
                 ask-price="{{ player.ask_price }}"
+                asks="{{ asks }}"
             {% endif %}
             low-value="{{ player.low_val }}"
             high-value="{{ player.high_val }}"              

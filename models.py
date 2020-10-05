@@ -140,15 +140,22 @@ class Group(BaseGroup):
     clearing_price = models.FloatField()
     def set_clearing_price(self):
         prices = []
+        bid_prices = []
+        ask_prices = []
         if self.subsession.get_buy_option():
             bid_prices = [p.bid_price for p in self.get_players()]
             prices.extend(bid_prices)
+            # bids sorted highest to lowest
+            bid_prices.sort(reverse=True)
         if self.subsession.get_sell_option():
             ask_prices = [p.ask_price for p in self.get_players()]
             prices.extend(ask_prices)
+            # asks sorted lowest to highest
+            ask_prices.sort()
         prices.sort()
         self.clearing_price = round(statistics.median(prices), 2)
         self.save()
+        return bid_prices, ask_prices, self.clearing_price
         """
         handle bids and asks that match clearing price exactly:
         - get number of matches in bid and ask prices

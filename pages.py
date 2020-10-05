@@ -43,6 +43,8 @@ class Results(Page):
     def vars_for_template(self):
         print('subsesh config', self.subsession.config, self.subsession.buy_option)
         print('high and low val', self.player.high_val, self.player.low_val)
+        bid_prices, ask_prices, clearing_price = self.group.set_clearing_price()
+        print('pages bids, asks, clear', bid_prices, ask_prices, clearing_price)
         return {
             'bought': self.player.get_bought(),
             'sold': self.player.get_sold(),
@@ -52,7 +54,10 @@ class Results(Page):
             'y': self.subsession.get_y(),
             'q': self.subsession.get_q(),
             'expected_value': self.subsession.get_expected_value(),
-            'default': self.subsession.get_default(),        
+            'default': self.subsession.get_default(),     
+            'bids': bid_prices,
+            'asks': ask_prices,
+            'clear': clearing_price,   
             }
 
 page_sequence = [MainPage, ResultsWaitPage, Results]

@@ -95,7 +95,6 @@ class PrecisionSelector extends PolymerElement {
             data.push([x, val]);
         }
         return data;
-
     }
 
     _updateSelected() {

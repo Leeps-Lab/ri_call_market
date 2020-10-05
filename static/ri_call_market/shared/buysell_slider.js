@@ -159,7 +159,6 @@ class BuysellSlider extends PolymerElement {
                     disabled="[[ disableSelect ]]"
                 ></paper-range-slider>
             </div>
-            <div>disabled slider? [[ disableSelect ]] </div>
         `;
     }
 

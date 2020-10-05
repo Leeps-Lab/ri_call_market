@@ -128,7 +128,6 @@ class BondPrice extends PolymerElement {
         * [[ mHigh ]] = <span class="high val">[[ highValue ]]</span></p>
 
             <buysell-slider
-                class="slider"
                 m="[[ m ]]"
                 max="[[ endowment ]]"
                 low-value="[[ lowValue ]]"
@@ -140,7 +139,6 @@ class BondPrice extends PolymerElement {
                 hide-before-submit="{{ hideBeforeSubmit }}"
                 price-to-show="[[ expectedValue ]]"
                 disable-select="[[ disableSelect ]]"
-                animate-price="[[ animatePrice ]]"
             ></buysell-slider>
             
             <div id="substep" hidden$="[[ _hideM(hideBeforeSubmit) ]]">
@@ -152,20 +150,6 @@ class BondPrice extends PolymerElement {
             </div>  
         </div>
         `;
-    }
-
-    _hideM(hideBeforeSubmit) {
-        if(!hideBeforeSubmit) {
-            this.$.substep.animate([
-                { opacity: 0 },
-                { opacity: 1 },
-            ], {
-                duration: 1000, // milliseconds
-                easing: 'ease-in',
-                fill: 'forwards',
-            });
-        }
-        return hideBeforeSubmit;
     }
 
     _hideOption(buyOption, sellOption) {

@@ -1,6 +1,6 @@
 import { html, PolymerElement } from '/static/otree-redwood/node_modules/@polymer/polymer/polymer-element.js';
-import './shared/buysell_slider.js';
-import './polymer-elements/paper-button.js';
+import '../shared/buysell_slider.js';
+import '../polymer-elements/paper-button.js';
 
 class Results extends PolymerElement {
     static get properties() {
@@ -49,7 +49,7 @@ class Results extends PolymerElement {
                 #results {
                     text-align: center;
                 }
-                @keyframes fadein{
+                @keyframes fadein {
                     0% { opacity:0; }
                     66% { opacity:0; }
                     100% { opacity:1; }
@@ -85,7 +85,6 @@ class Results extends PolymerElement {
                 }    
             </style>
             <div id="results">
-                <!-- <h2>Results</h2> -->
                 <buysell-slider
                     class="slider"
                     low-value="[[ lowValue ]]"
