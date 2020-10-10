@@ -41,7 +41,7 @@ class Results(Page):
         return self.subsession.config is not None
 
     def vars_for_template(self):
-        print('subsesh config', self.subsession.config, self.subsession.buy_option)
+        print('subsesh config', self.subsession.config)
         print('high and low val', self.player.high_val, self.player.low_val)
         bid_prices, ask_prices, clearing_price = self.group.set_clearing_price()
         print('pages bids, asks, clear', bid_prices, ask_prices, clearing_price)

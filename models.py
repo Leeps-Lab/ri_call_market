@@ -138,33 +138,81 @@ class Subsession(BaseSubsession):
 
 class Group(BaseGroup):
     clearing_price = models.FloatField()
+
+    # called when all players have submitted bid/ask prices (reached wait page)
     def set_clearing_price(self):
         prices = []
         bid_prices = []
         ask_prices = []
+        pid_bid_matches = []
+        pid_ask_matches = []
+
         if self.subsession.get_buy_option():
-            bid_prices = [p.bid_price for p in self.get_players()]
+            for p in self.get_players():
+                if p.bid_price == self.clearing_price:
+                    pid_bid_matches.append(p.id_in_group)
+                bid_prices.append(p.bid_price)
             prices.extend(bid_prices)
             # bids sorted highest to lowest
             bid_prices.sort(reverse=True)
+
         if self.subsession.get_sell_option():
-            ask_prices = [p.ask_price for p in self.get_players()]
+            for p in self.get_players():
+                if p.ask_price == self.clearing_price:
+                    pid_ask_matches.append(p.id_in_group)
+                ask_prices.append(p.ask_price)
             prices.extend(ask_prices)
             # asks sorted lowest to highest
             ask_prices.sort()
+
+        # sort all prices to determine clearing
         prices.sort()
+
+        # TODO: calculate clearing price differently for buy only/sell only
+
         self.clearing_price = round(statistics.median(prices), 2)
+
+        """
+        handle bids and asks exactly at p*
+        1. collect player id's of bid and ask prices (done above)
+        2. if # of bid matches != # of ask matches, shuffle player id's to ration randomly 
+        3. execute transactions for min(len(pid_bid_matches), len(pid_ask_matches)), 0 -> len(list)
+            - id's collected earlier used to reference player and directly set bought/sold to True
+        4. leftovers in one set of prices = "long side", and are ignored
+            - id's used to set bought/sold to false
+
+        - UI: accepted = green, rejected = blue, all the rest = black/grey
+        """
+
+        if pid_bid_matches or pid_ask_matches:
+
+            # if unequal number of bids and ask matches, shuffle players to ration randomly
+            if len(pid_bid_matches) != len(pid_ask_matches):
+                print('before shuffle', pid_bid_matches, pid_ask_matches)
+                random.shuffle(pid_bid_matches)
+                random.shuffle(pid_ask_matches)
+                print('after shuffle', pid_bid_matches, pid_ask_matches)
+
+            # execute transactions for both sets
+            print('START executing transactions: ', pid_bid_matches, pid_ask_matches)
+            while pid_bid_matches and pid_ask_matches:
+                pb = pid_bid_matches.pop(0)
+                pa = pid_ask_matches.pop(0)
+                self.get_player_by_id(pb).bought = True
+                self.get_player_by_id(pa).sold = True
+            print('FINISH executing transactions: ', pid_bid_matches, pid_ask_matches)
+
+            # "long side" of randomly selected from the bigger set are ignored
+            # TODO: case untested
+            for pb in pid_bid_matches:
+                print('long side - bids: ', pid_bid_matches)
+                self.get_player_by_id(pb).bought = False
+            for pa in pid_ask_matches:
+                print('long side - asks: ', pid_ask_matches)
+                self.get_player_by_id(pa).sold = False
+
         self.save()
         return bid_prices, ask_prices, self.clearing_price
-        """
-        handle bids and asks that match clearing price exactly:
-        - get number of matches in bid and ask prices
-        - find min length among the two
-        - prices beyond min. length = how many to select randomly to ignore
-        - clear the rest
-
-        - may have to use map/dict to match players with prices for determining
-        """
 
 class Player(BasePlayer):
     width = models.IntegerField(initial=100)
@@ -175,18 +223,22 @@ class Player(BasePlayer):
     high_val = models.FloatField(initial=100)
     bid_price = models.FloatField(initial=0)
     ask_price = models.FloatField(initial=100)
-    bought = models.BooleanField(initial=False)
-    sold = models.BooleanField(initial=False)
+    bought = models.BooleanField()
+    sold = models.BooleanField()
     round_payoff = models.FloatField(initial=100)
 
     def get_bought(self):
-        self.bought = self.subsession.buy_option and self.bid_price > self.group.clearing_price
-        self.save()
+        print('get bought', self.bid_price, self.bought)
+        if self.bought is None:
+            self.bought = self.subsession.buy_option and self.bid_price > self.group.clearing_price
+            self.save()
         return self.bought
     
     def get_sold(self):
-        self.sold = self.subsession.sell_option and self.ask_price > self.group.clearing_price
-        self.save()
+        print('get sold', self.ask_price, self.sold)
+        if self.sold is None:
+            self.sold = self.subsession.sell_option and self.ask_price < self.group.clearing_price
+            self.save()
         return self.sold
 
 def custom_export(self, players):

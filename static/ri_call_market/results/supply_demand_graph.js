@@ -64,7 +64,7 @@ class SupplyDemandGraph extends PolymerElement {
                 text: ''
             },
             xAxis: {
-                // min: 1,
+                min: 0,
                 // max: Math.max(this.bids.length, this.bids.length), // TODO: replace with number of players in group
             },
             yAxis: {
@@ -83,7 +83,7 @@ class SupplyDemandGraph extends PolymerElement {
             },
             plotOptions: {
                 series: {
-                    step: 'left',
+                    step: 'right',
                 },
                 spline: {
                     marker: {

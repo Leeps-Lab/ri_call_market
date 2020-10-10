@@ -136,7 +136,7 @@ class BondPrice extends PolymerElement {
                 sell-option="[[ sellOption ]]"
                 buy-price="{{ buyPrice }}"
                 sell-price="{{ sellPrice }}"
-                hide-before-submit="{{ hideBeforeSubmit }}"
+                hide-before-submit
                 price-to-show="[[ expectedValue ]]"
                 disable-select="[[ disableSelect ]]"
             ></buysell-slider>

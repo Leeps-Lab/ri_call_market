@@ -23,9 +23,7 @@ class BuysellSlider extends PolymerElement {
                 value: [0, , , , , 100],
             },
             priceToShow: Number,
-            animatePrice: {
-                type: Boolean,
-            },
+            animatePrice: Boolean,
             disableSelect: {
                 type: Boolean,
                 value: true,
@@ -109,7 +107,7 @@ class BuysellSlider extends PolymerElement {
                 id="price"
                 value="[[ priceToShow ]]"
                 style$="left: {{ _getMark(priceToShow) }}%;"
-                hidden$="[[ _hidePrice(hideBeforeSubmit, animatePrice) ]]"
+                hidden$="[[ hideBeforeSubmit ]]"
             ></price-marker>
             </div>
             <div class="markers">
