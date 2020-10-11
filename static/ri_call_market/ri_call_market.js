@@ -130,6 +130,9 @@ class RICallMarket extends PolymerElement {
                     asks="[[ asks ]]"
                     buy-price="[[ bidPrice ]]"
                     sell-price="[[ askPrice ]]"
+                    q="[[ q ]]"
+                    bought="[[ bought ]]"
+                    sold="[[ sold ]]"
                 ></supply-demand-graph>
                 <results-page
                     endowment="[[ endowment ]]"

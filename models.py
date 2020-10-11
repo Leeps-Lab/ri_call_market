@@ -168,9 +168,15 @@ class Group(BaseGroup):
         # sort all prices to determine clearing
         prices.sort()
 
-        # TODO: calculate clearing price differently for buy only/sell only
-
-        self.clearing_price = round(statistics.median(prices), 2)
+        if self.subsession.get_buy_option() and self.subsession.get_sell_option():
+            self.clearing_price = round(statistics.median(prices), 2)
+        else:
+            n = max(len(bid_prices), len(ask_prices)) # cheat method of getting number of players
+            m = n // 2 if n % 2 == 0 else (n + 1) // 2
+            if self.subsession.get_buy_option():
+                self.clearing_price = bid_prices[-m] # 93, 76, 68, 64 -> m = 2nd lowest bid (68)
+            else:
+                self.clearing_price = ask_prices[m] # 21, 29, 58, 85 -> m+1 = 3rd lowest ask (58)
 
         """
         handle bids and asks exactly at p*

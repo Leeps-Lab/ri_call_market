@@ -3,6 +3,10 @@ import { html, PolymerElement } from '/static/otree-redwood/node_modules/@polyme
 class SupplyDemandGraph extends PolymerElement {
     static get properties() {
         return {
+            clearing_price: {
+                type: Array,
+                value: [],
+            }
         }
     }
 
@@ -30,27 +34,47 @@ class SupplyDemandGraph extends PolymerElement {
 
     _getPricePoints(prices, price) {
         let data = [];
-        console.log('price', price);
         for (let i = 0; i < prices.length; i++) {
             // marker on player's submitted price
-            if (price && prices[i] === price)
+            if (price && prices[i] === price) {
+                let url = 'url(../../../../../static/ri_call_market/shared/rejected.png)';
+                if (price === this.buyPrice && this.bought || price === this.sellPrice && this.sold)
+                    url = 'url(../../../../../static/ri_call_market/shared/transacted.png)';                    
                 data.push({
                     x: i+1,
                     y: prices[i],
                     marker: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
+                        symbol: url,
+                        width: 24,
+                        height: 24,
                     }
                 });
-            else
+                // plots clearing price without symbol if bid/ask price matches
+                // probably not needed - clearing price exists on x-coord i-1 (prev. corner)
+                // if (prices[i] === this.q) {
+                //     this.clearing_price.push([i, this.q]); // [i, this.q]
+                // }
+            } else
                 data.push([i+1, prices[i]]);
+
+            // place clearing price with proper x coordinate
+            if ((prices[i] === this.q || (!prices.includes(this.q) && i > 0 && prices[i-1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
+            this.clearing_price.push({
+                x: i,
+                y: this.q,
+                marker: {
+                    symbol: 'url(../../../../../static/ri_call_market/shared/clearing_price.png)',
+                    width: 20,
+                    height: 20,
+                }
+            });
         }
-        console.log(this.data);
         return data;
     }
 
     _initHighchart() {
         Highcharts.setOptions({
-            colors: ['#2F3238', '#007bff'],
+            colors: ['#2F3238', '#007bff', 'orange'],
         });
 
         this.graphObj = Highcharts.chart({
@@ -108,7 +132,7 @@ class SupplyDemandGraph extends PolymerElement {
             }, {
                 name: 'Ask Price',
                 marker: {
-                    symbol: 'diamond'
+                    symbol: 'diamond',
                 },
                 data: this._getPricePoints(this.asks, this.sellPrice),
                 // data: [{
@@ -117,7 +141,24 @@ class SupplyDemandGraph extends PolymerElement {
                 //         symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
                 //     }
                 // }, 14.2, 15.7, 18.5, 15.9, 13.2, 11.0, 9.6, 8.2]
-            }]
+            },
+            {
+                name: 'Bond Price',
+                marker: {
+                    symbol: 'circle' // 'circle', 'square','diamond', 'triangle' and 'triangle-down'
+                },
+                data: this.clearing_price
+            }],
+            // navigation: {
+            //     buttonOptions: {
+            //         height: 40,
+            //         width: 48,
+            //         symbolSize: 24,
+            //         symbolX: 23,
+            //         symbolY: 21,
+            //         symbolStrokeWidth: 2
+            //     }
+            // }
         });
     }
 }

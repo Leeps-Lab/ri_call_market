@@ -33,13 +33,13 @@ class PriceMarker extends PolymerElement {
                     border-radius: 15%;
                 }
                 .arr {
-                    margin-top: -10px;
                     font-size: 30px;
-                    height: 10px;
                 }
             </style>
-            <span class="val">[[ value ]]</span>
-            <span class="arr">&#8595;</span>
+            <span hidden$="[[ hidden ]]">
+                <span class="val">[[ value ]]</span>
+                <span class="arr">&#8595;</span>
+            </span>
         `;
     }
 }

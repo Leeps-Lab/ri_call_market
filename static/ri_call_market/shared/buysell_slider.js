@@ -107,7 +107,7 @@ class BuysellSlider extends PolymerElement {
                 id="price"
                 value="[[ priceToShow ]]"
                 style$="left: {{ _getMark(priceToShow) }}%;"
-                hidden$="[[ hideBeforeSubmit ]]"
+                hidden="[[ hideBeforeSubmit ]]"
             ></price-marker>
             </div>
             <div class="markers">
