@@ -20,7 +20,7 @@ Your app description
 """
 
 def parse_config(config):
-    with open('rational_inattention/configs/session_config.csv', newline='') as config_file:
+    with open('ri_call_market/configs/session_config.csv', newline='') as config_file:
         rows = list(csv.DictReader(config_file))
         rounds = []
         for row in rows:
@@ -188,7 +188,7 @@ class Group(BaseGroup):
         4. leftovers in one set of prices = "long side", and are ignored
             - id's used to set bought/sold to false
 
-        - UI: accepted = green, rejected = blue, all the rest = black/grey
+        - UI: accepted = green, rejected = red, all the rest = black/blue
         """
 
         if pid_bid_matches or pid_ask_matches:

@@ -36,6 +36,8 @@ class SupplyDemandGraph extends PolymerElement {
     * and adds dummy points to start and end steps with vertical lines */ 
     _getPricePoints(prices, price) {
         let data = [];
+        if (price === undefined)
+            return data;
         // dummy point for leftmost vertical line step
         if (prices[0] <= prices[prices.length - 1]) {
             data.push({
