@@ -3,6 +3,7 @@ import { html, PolymerElement } from '/static/otree-redwood/node_modules/@polyme
 class SupplyDemandGraph extends PolymerElement {
     static get properties() {
         return {
+            // single point as its own series on chart
             clearing_price: {
                 type: Array,
                 value: [],
@@ -56,22 +57,12 @@ class SupplyDemandGraph extends PolymerElement {
         for (let i = 0; i < prices.length; i++) {
             // marker on player's submitted price
             if (price && prices[i] === price) {
-                // let url = 'url(../../../../../static/ri_call_market/shared/rejected.png)';
-                if (price === this.buyPrice && this.bought || price === this.sellPrice && this.sold) {
-                    // url = 'url(../../../../../static/ri_call_market/shared/transacted.png)';    
-                }
                 data.push({
                     x: i+1,
                     y: prices[i],
-                    // marker: {
-                    //     symbol: url,
-                    //     width: 24,
-                    //     height: 24,
-                    // }
                 });
             } else
                 data.push([i+1, prices[i]]);
-
             // place clearing price with proper x coordinate
             if ((prices[i] === this.q || (!prices.includes(this.q) && i && prices[i-1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
             this.clearing_price.push({
@@ -85,11 +76,10 @@ class SupplyDemandGraph extends PolymerElement {
             });
         }
         // dummy point for rightmost vertical line step
-        if (prices[0] <= prices[prices.length - 1]) {
+        if (prices[0] <= prices[prices.length - 1])
             data.push([prices.length, 100]);
-        } else {
+        else
             data.push([prices.length, 0]);
-        }
         return data;
     }
 
@@ -135,21 +125,17 @@ class SupplyDemandGraph extends PolymerElement {
             },
             yAxis: {
                 min: 0, 
-                max: 100,
+                max: 100, // TODO: hardcoded with dummy points, may need to pass in params e.g. initial endowment
                 title: {
                     text: 'Bid/Ask Price'
                 },
-                labels: {
-                    // formatter: function () {
-                    //     return this.value + '°';
-                    // }
-                }
             },
             tooltip: {
                 crosshairs: true,
                 // shared: true,
                 formatter: function () {
                     for (const p of this.points) {
+                        // removes tooltip for 1st and last dummy points
                         if (p.y === 0 || p.y === 100) {
                             return false;
                         }

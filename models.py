@@ -141,38 +141,30 @@ class Group(BaseGroup):
 
     # called when all players have submitted bid/ask prices (reached wait page)
     def set_clearing_price(self):
-        prices = []
         bid_prices = []
         ask_prices = []
-        pid_bid_matches = []
-        pid_ask_matches = []
 
-        # TODO: why is clearing price used in conditional when it's assigned later... D:
         if self.subsession.get_buy_option():
-            for p in self.get_players():
-                if p.bid_price == self.clearing_price:
-                    pid_bid_matches.append(p.id_in_group)
-                bid_prices.append(p.bid_price)
-            prices.extend(bid_prices)
+            bid_prices.extend([p.bid_price for p in self.get_players()])
             # bids sorted highest to lowest
             bid_prices.sort(reverse=True)
 
         if self.subsession.get_sell_option():
-            for p in self.get_players():
-                if p.ask_price == self.clearing_price:
-                    pid_ask_matches.append(p.id_in_group)
-                ask_prices.append(p.ask_price)
-            prices.extend(ask_prices)
+            ask_prices.extend([p.ask_price for p in self.get_players()])
             # asks sorted lowest to highest
             ask_prices.sort()
 
-        # sort all prices to determine clearing
-        prices.sort()
 
         if self.subsession.get_buy_option() and self.subsession.get_sell_option():
+            prices = []
+            prices.extend(ask_prices)
+            prices.extend(bid_prices)
+            # sort all prices to determine clearing
+            prices.sort()
             self.clearing_price = round(statistics.median(prices), 2)
         else:
-            n = max(len(bid_prices), len(ask_prices)) # cheat method of getting number of players
+            # assuming all players submit bids, asks, or both
+            n = max(len(bid_prices), len(ask_prices))
             m = n // 2 if n % 2 == 0 else (n + 1) // 2
             if self.subsession.get_buy_option():
                 self.clearing_price = bid_prices[-m] # 93, 76, 68, 64 -> m = 2nd lowest bid (68)
@@ -181,7 +173,7 @@ class Group(BaseGroup):
 
         """
         handle bids and asks exactly at p*
-        1. collect player id's of bid and ask prices (done above)
+        1. collect player id's of bid and ask prices
         2. if # of bid matches != # of ask matches, shuffle player id's to ration randomly 
         3. execute transactions for min(len(pid_bid_matches), len(pid_ask_matches)), 0 -> len(list)
             - id's collected earlier used to reference player and directly set bought/sold to True
@@ -190,6 +182,11 @@ class Group(BaseGroup):
 
         - UI: accepted = green, rejected = red, all the rest = black/blue
         """
+        pid_bid_matches = []
+        pid_ask_matches = []
+
+        pid_bid_matches.extend([p.id_in_group for p in self.get_players() if p.bid_price == self.clearing_price])
+        pid_ask_matches.extend([p.id_in_group for p in self.get_players() if p.ask_price == self.clearing_price])
 
         if pid_bid_matches or pid_ask_matches:
 

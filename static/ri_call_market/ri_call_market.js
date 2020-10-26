@@ -14,7 +14,7 @@ class RICallMarket extends PolymerElement {
                 value: 0,
                 observer: function (step, isResultPage) {
                     setTimeout(function () {
-                        if (step && step <= 3 && !isResultPage) {  // auto scroll down to next step/screen
+                        if (step && step <= 4 && !isResultPage) {  // auto scroll down to next step/screen
                             window.scrollBy({ top: 480, behavior: 'smooth' });
                         }
                     }, 500);
@@ -29,8 +29,15 @@ class RICallMarket extends PolymerElement {
             q: Number,
             endowment: Number,
             bonds: Number,
-            buyOption: Boolean,
-            sellOption: Boolean,
+            // sets defaults for buy/sell options (false = undefined from python)
+            buyOption: {
+                type: Boolean,
+                value: false,
+            },
+            sellOption: {
+                type: Boolean,
+                value: false,
+            },
             precision: Number,
             cost: Number,
             mLow: Number,
