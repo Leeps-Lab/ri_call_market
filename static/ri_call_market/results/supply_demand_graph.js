@@ -32,44 +32,84 @@ class SupplyDemandGraph extends PolymerElement {
         this._initHighchart();
     }
 
+    /** configures bid and ask price points for transactions colors (red/green), 
+    * and adds dummy points to start and end steps with vertical lines */ 
     _getPricePoints(prices, price) {
         let data = [];
+        // dummy point for leftmost vertical line step
+        if (prices[0] <= prices[prices.length - 1]) {
+            data.push({
+                x: 0,
+                y: 0,
+                tooltip: false,
+            });       
+         } else {
+            data.push({
+                x: 0,
+                y: 100,
+                tooltip: false,
+            });
+        }
+        // console.log(price, this.buyPrice, this.sellPrice, this.bought, this.sold);
         for (let i = 0; i < prices.length; i++) {
             // marker on player's submitted price
             if (price && prices[i] === price) {
-                let url = 'url(../../../../../static/ri_call_market/shared/rejected.png)';
-                if (price === this.buyPrice && this.bought || price === this.sellPrice && this.sold)
-                    url = 'url(../../../../../static/ri_call_market/shared/transacted.png)';                    
+                // let url = 'url(../../../../../static/ri_call_market/shared/rejected.png)';
+                if (price === this.buyPrice && this.bought || price === this.sellPrice && this.sold) {
+                    // url = 'url(../../../../../static/ri_call_market/shared/transacted.png)';    
+                }
                 data.push({
                     x: i+1,
                     y: prices[i],
-                    marker: {
-                        symbol: url,
-                        width: 24,
-                        height: 24,
-                    }
+                    // marker: {
+                    //     symbol: url,
+                    //     width: 24,
+                    //     height: 24,
+                    // }
                 });
-                // plots clearing price without symbol if bid/ask price matches
-                // probably not needed - clearing price exists on x-coord i-1 (prev. corner)
-                // if (prices[i] === this.q) {
-                //     this.clearing_price.push([i, this.q]); // [i, this.q]
-                // }
             } else
                 data.push([i+1, prices[i]]);
 
             // place clearing price with proper x coordinate
-            if ((prices[i] === this.q || (!prices.includes(this.q) && i > 0 && prices[i-1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
+            if ((prices[i] === this.q || (!prices.includes(this.q) && i && prices[i-1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
             this.clearing_price.push({
                 x: i,
                 y: this.q,
                 marker: {
                     symbol: 'url(../../../../../static/ri_call_market/shared/clearing_price.png)',
-                    width: 20,
-                    height: 20,
+                    width: 25,
+                    height: 25,
                 }
             });
         }
+        // dummy point for rightmost vertical line step
+        if (prices[0] <= prices[prices.length - 1]) {
+            data.push([prices.length, 100]);
+        } else {
+            data.push([prices.length, 0]);
+        }
         return data;
+    }
+
+    _getColorZones(prices, price) {
+        prices.unshift(0);
+        let zones = [];
+        let color = '#DF5353';
+        if (price === this.buyPrice && this.bought || price === this.sellPrice && this.sold)
+            color = '#55BF3B';
+        let index =  prices.indexOf(price);
+        // avoids including the vertical step in the colored zone (horizontal line only)
+        let startZone = index - 0.985;
+        let endZone = index - 0.015;
+        zones.push({
+            value: startZone,
+        });
+        zones.push({
+            value: endZone,
+            color: color,
+        });
+
+        return zones;
     }
 
     _initHighchart() {
@@ -89,9 +129,11 @@ class SupplyDemandGraph extends PolymerElement {
             },
             xAxis: {
                 min: 0,
-                // max: Math.max(this.bids.length, this.bids.length), // TODO: replace with number of players in group
+                max: Math.max(this.bids.length, this.asks.length),
             },
             yAxis: {
+                min: 0, 
+                max: 100,
                 title: {
                     text: 'Bid/Ask Price'
                 },
@@ -103,62 +145,45 @@ class SupplyDemandGraph extends PolymerElement {
             },
             tooltip: {
                 crosshairs: true,
-                shared: true
+                // shared: true,
+                formatter: function () {
+                    for (const p of this.points) {
+                        if (p.y === 0 || p.y === 100) {
+                            return false;
+                        }
+                    }
+                    let formats = [];
+                    formats.push(this.x);
+                    this.points.forEach(function(point) {
+                        formats.push('<b>' + point.series.name + '</b>: ' + point.y);
+                    })                     
+                    return formats;          
+                },
+                split: true,
+                distance: 30,
+                padding: 5,
             },
             plotOptions: {
                 series: {
                     step: 'right',
+                    lineWidth: 4,
                 },
-                spline: {
-                    marker: {
-                        radius: 4,
-                        lineColor: '#666666',
-                        lineWidth: 1
-                    }
-                }
             },
             series: [{
                 name: 'Bid Price',
-                marker: {
-                    symbol: 'square'
-                },
                 data: this._getPricePoints(this.bids, this.buyPrice),
-                // data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, {
-                //     y: 26.5,
-                //     marker: {
-                //         symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
-                //     }
-                // }, 23.3, 18.3, 13.9, 9.6]        
+                zoneAxis: 'x',
+                zones: this._getColorZones(this.bids, this.buyPrice),
             }, {
                 name: 'Ask Price',
-                marker: {
-                    symbol: 'diamond',
-                },
                 data: this._getPricePoints(this.asks, this.sellPrice),
-                // data: [{
-                //     y: 8.9,
-                //     marker: {
-                //         symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
-                //     }
-                // }, 14.2, 15.7, 18.5, 15.9, 13.2, 11.0, 9.6, 8.2]
+                zoneAxis: 'x',
+                zones: this._getColorZones(this.asks, this.sellPrice),
             },
             {
                 name: 'Bond Price',
-                marker: {
-                    symbol: 'circle' // 'circle', 'square','diamond', 'triangle' and 'triangle-down'
-                },
-                data: this.clearing_price
+                data: this.clearing_price,
             }],
-            // navigation: {
-            //     buttonOptions: {
-            //         height: 40,
-            //         width: 48,
-            //         symbolSize: 24,
-            //         symbolX: 23,
-            //         symbolY: 21,
-            //         symbolStrokeWidth: 2
-            //     }
-            // }
         });
     }
 }

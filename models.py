@@ -147,6 +147,7 @@ class Group(BaseGroup):
         pid_bid_matches = []
         pid_ask_matches = []
 
+        # TODO: why is clearing price used in conditional when it's assigned later... D:
         if self.subsession.get_buy_option():
             for p in self.get_players():
                 if p.bid_price == self.clearing_price:
