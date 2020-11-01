@@ -64,9 +64,9 @@ class SupplyDemandGraph extends PolymerElement {
             } else
                 data.push([i+1, prices[i]]);
             // place clearing price with proper x coordinate
-            if ((prices[i] === this.q || (!prices.includes(this.q) && i && prices[i-1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
+            if ((prices[i-1] === this.q || (!prices.includes(this.q) && i && prices[i-1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
             this.clearing_price.push({
-                x: i,
+                x: i-1,
                 y: this.q,
                 marker: {
                     symbol: 'url(../../../../../static/ri_call_market/shared/clearing_price.png)',
