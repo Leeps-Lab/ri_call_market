@@ -27,7 +27,7 @@ class RICallMarket extends PolymerElement {
             m: Number,
             y: Number,
             q: Number,
-            endowment: Number,
+            participation_fee: Number,
             bonds: Number,
             // sets defaults for buy/sell options (false = undefined from python)
             buyOption: {
@@ -100,7 +100,7 @@ class RICallMarket extends PolymerElement {
                 <div class="first">
                 <public-info
                         g="[[ g ]]"
-                        credits="[[ endowment ]]"
+                        credits="[[ participation_fee ]]"
                     ></public-info>
                 </div>
                 <div hidden$="{{ _hideStep(step, 1) }}">
@@ -123,7 +123,7 @@ class RICallMarket extends PolymerElement {
                         m-low="{{ mLow }}"
                         m-high="{{ mHigh }}"
                         low-value="{{ lowValue }}"
-                        high-value="{{ highValue }}"              
+                        high-value="{{ highValue }}"
                         buy-price="{{ bidPrice }}"
                         sell-price="{{ askPrice }}"
                         expected-value="{{ expectedVal }}"
@@ -142,7 +142,7 @@ class RICallMarket extends PolymerElement {
                     sold="[[ sold ]]"
                 ></supply-demand-graph>
                 <results-page
-                    endowment="[[ endowment ]]"
+                    participation_fee="[[ participation_fee ]]"
                     bonds="[[ bonds ]]"
                     g="[[ g ]]"
                     m="[[ m ]]"
@@ -153,7 +153,7 @@ class RICallMarket extends PolymerElement {
                     buy-price="[[ bidPrice ]]"
                     sell-price="[[ askPrice ]]"
                     low-value="[[ lowValue ]]"
-                    high-value="[[ highValue ]]"              
+                    high-value="[[ highValue ]]"
                     cost="[[ cost ]]"
                     is-default="{{ default }}"
                     bought="[[ bought ]]"

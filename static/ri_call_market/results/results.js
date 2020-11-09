@@ -32,7 +32,7 @@ class Results extends PolymerElement {
             },
             payoff: {
                 type: Number,
-                computed: '_getPayoff(bought, sold, endowment, q, cost, bondPayment)',
+                computed: '_getPayoff(bought, sold, participation_fee, q, cost, bondPayment)',
                 notify: true,
                 reflectToAttribute: true,
             },
@@ -79,10 +79,10 @@ class Results extends PolymerElement {
                 .price-val {
                     color: orange;
                     font-weight: bold;
-                }    
+                }
                 .slider {
-                    --price-color: orange;   
-                }    
+                    --price-color: orange;
+                }
             </style>
             <div id="results">
                 <buysell-slider
@@ -113,7 +113,7 @@ class Results extends PolymerElement {
                     <h3>Default? <span class$="[[ _getDefaultColor(defaultResult) ]]">[[ defaultResult ]]</span></h3>
                         <h4>Actual bond payment: [[ bondPayment ]]<br/>
                         Your private info cost: [[ cost ]]</h4>
-                    <h3>Your payoff: [[ _getPayoffFormula(bought, sold, endowment, q, cost) ]] = [[ payoff ]]</h3>
+                    <h3>Your payoff: [[ _getPayoffFormula(bought, sold, participation_fee, q, cost) ]] = [[ payoff ]]</h3>
                 </div>
             </div>
         `;
@@ -164,21 +164,21 @@ class Results extends PolymerElement {
     _getSell(sold) {
         return sold ? 'sold' : 'didn\'t sell';
     }
-    
+
     _getBondPayment(m) {
         return this.isDefault ? m : 100; // 0 if match
     }
 
-    _getPayoff(bought, sold, endowment, q, cost, bondPayment) {
+    _getPayoff(bought, sold, participation_fee, q, cost, bondPayment) {
         // neither bought nor sold
-        let val = endowment + bondPayment - cost;
+        let val = bondPayment *  this.numBonds - cost;
         // bought
         if(bought) {
-            val = endowment + (2 * bondPayment) - cost - q;
+            val = (this.numBonds * bondPayment) - cost - q;
         }
         // sold
         if (sold) {
-            val = endowment + q - cost;
+            val = participation_fee + q - cost;
         }
         return parseFloat(val.toFixed(2));
     }
@@ -195,17 +195,17 @@ class Results extends PolymerElement {
         return bonds;
     }
 
-    _getPayoffFormula(bought, sold, endowment, q, cost) {
-        let f = `${endowment}`;
+    _getPayoffFormula(bought, sold, participation_fee, q, cost) {
+        let f = ``;
         // bought
         if (bought)
-            f += ` + (2 * ${this.bondPayment}) - ${q}`;
+            f += ` (${this.numBonds} * ${this.bondPayment}) - ${q}`;
         // sold
         else if (sold)
-            f += ` + ${q}`;
+            f += ` ${q}`;
         // neither
         else
-            f += ` + ${this.bondPayment}`;
+            f += ` (${this.numBonds} * ${this.bondPayment})`;
         // cost if non-zero
         if (cost)
             f += ` - ${cost}`;

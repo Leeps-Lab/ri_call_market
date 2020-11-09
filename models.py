@@ -26,7 +26,7 @@ def parse_config(config):
         for row in rows:
             rounds.append({
                 'round': int(row['round']) if row['round'] else 0,
-                'endowment': float(row['endowment']) if row.get('endowment') else 100,
+                'participation_fee': float(row['participation_fee']) if row.get('participation_fee') else 100,
                 'initial_bonds': int(row['initial_bonds']) if row.get('initial_bonds') else 1,
                 'buy_option': False if row.get('buy_option') == 'False' else True,
                 'sell_option': False if row.get('sell_option') == 'False' else True,
@@ -41,7 +41,7 @@ def parse_config(config):
 class Constants(BaseConstants):
     name_in_url = 'ri_call_market'
     players_per_group = None
-    num_rounds=10
+    num_rounds=48
 
     def round_number(self):
         return len(parse_config(self.session.config['config_file']))
@@ -111,13 +111,13 @@ class Subsession(BaseSubsession):
             self.default = self.y < self.g
             self.save()
         return self.default
-    
+
     def get_buy_option(self):
         if self.buy_option is None:
             self.buy_option = self.config.get('buy_option')
             self.save()
         return self.buy_option
-    
+
     def get_sell_option(self):
         if self.sell_option is None:
             self.sell_option = self.config.get('sell_option')
@@ -174,7 +174,7 @@ class Group(BaseGroup):
         """
         handle bids and asks exactly at p*
         1. collect player id's of bid and ask prices
-        2. if # of bid matches != # of ask matches, shuffle player id's to ration randomly 
+        2. if # of bid matches != # of ask matches, shuffle player id's to ration randomly
         3. execute transactions for min(len(pid_bid_matches), len(pid_ask_matches)), 0 -> len(list)
             - id's collected earlier used to reference player and directly set bought/sold to True
         4. leftovers in one set of prices = "long side", and are ignored
@@ -237,7 +237,7 @@ class Player(BasePlayer):
             self.bought = self.subsession.buy_option and self.bid_price > self.group.clearing_price
             self.save()
         return self.bought
-    
+
     def get_sold(self):
         print('get sold', self.ask_price, self.sold)
         if self.sold is None:

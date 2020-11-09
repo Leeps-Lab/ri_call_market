@@ -24,7 +24,7 @@
             id="resultId"
             g="{{ g }}"
             k="{{ k }}"
-            endowment="{{ config.endowment }}"
+            participation_fee="{{ config.participation_fee }}"
             bonds="{{ config.initial_bonds }}"
             m="{{ m }}"
             y="{{ y }}"
@@ -40,7 +40,7 @@
                 asks="{{ asks }}"
             {% endif %}
             low-value="{{ player.low_val }}"
-            high-value="{{ player.high_val }}"              
+            high-value="{{ player.high_val }}"
             cost="{{ player.cost }}"
             is-default="{{ default }}"
             {% if player.bought %}
@@ -59,7 +59,7 @@
     {% if form.round_payoff.errors %}
         <h5>Error in getting payoff for this round</h5>
     {{ form.round_payoff.errors }}
-    
+
 {% endif %}
 
 
@@ -73,7 +73,5 @@
         float: right;
         margin-right: 5%;
     }
-</style>   
+</style>
 {% endblock %}
-
-

@@ -24,20 +24,40 @@
             }
         });
     </script>
+    <style>
+      .otree-timer {
+      display: none;
+      opacity: .7;
+      color: black;
+      font-weight: bold;
+      position: sticky;
+      top: 100px;
+      left: 0;
+  }
+    </style>
+    <script>
+        $(function () {
+            $('.otree-timer__time-left').on('update.countdown', function (event) {
+                if (event.offset.totalSeconds === 60) {
+                    $('.otree-timer').show();
+                }
+            });
+        });
+    </script>
 
 {% endblock %}
 
 {% block content %}
-    
+
     {% with config=subsession.config %}
 
         <h4>Round #{{ round_num }}</h4>
-        <!-- <p><strong>Total endowment:</strong> {{ config.endowment }} credits and {{ config.initial_bonds }} bonds</p> -->
+        <!-- <p><strong>Total participation_fee:</strong> {{ config.participation_fee }} credits and {{ config.initial_bonds }} bonds</p> -->
         <ri-call-market
                 id='rationalInattentionId'
                 g="{{ g }}"
                 k="{{ k }}"
-                endowment="{{ config.endowment }}"
+                participation_fee="{{ config.participation_fee }}"
                 bonds="{{ config.initial_bonds }}"
                 m="{{ m }}"
                 y="{{ y }}"
@@ -50,7 +70,7 @@
                 {% endif %}
         ></ri-call-market>
         <button id="next_btn" class="otree-btn-next btn btn-primary">Submit</button>
-    
+
     {% endwith %}
 
     <input type="hidden" name="width" id="width"/>
@@ -104,12 +124,12 @@
             padding: 0 !important;
         }
     .otree-body {
-        max-width: none;    
+        max-width: none;
     }
     #next_btn {
         display: none;
         float: right;
         margin-right: 5%;
     }
-</style>   
+</style>
 {% endblock %}
