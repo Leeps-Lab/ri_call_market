@@ -171,14 +171,14 @@ class Results extends PolymerElement {
 
     _getPayoff(bought, sold, participation_fee, q, cost, bondPayment) {
         // neither bought nor sold
-        let val = bondPayment *  this.numBonds - cost;
+        let val = (bondPayment *  this.numBonds) - cost;
         // bought
         if(bought) {
             val = (this.numBonds * bondPayment) - cost - q;
         }
         // sold
         if (sold) {
-            val = participation_fee + q - cost;
+            val = q - cost;
         }
         return parseFloat(val.toFixed(2));
     }
