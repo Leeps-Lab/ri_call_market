@@ -17,6 +17,12 @@ class PrecisionSelector extends PolymerElement {
                 notify: true,
                 reflectToAttribute: true,
             },
+            cost_round: {
+                type: Number,
+                value: 0,
+                notify: true,
+                reflectToAttribute: true,
+            },
             data: {
                 type: Array,
                 value: [],
@@ -64,7 +70,7 @@ class PrecisionSelector extends PolymerElement {
             <div class="container">
                 <figure class="highcharts-figure">
                 <div id="chart"></div>
-                <input type="range" min="1" max=[[ scale ]] step="1" value="{{ precision::input }}" disabled$="[[ disableSelect ]]">
+                <input type="range" min="1" max=[[ scale ]] step="1" value="{{ precision::input }}" disabled$="[[ disableSelect ]]" >
                 <div class="sliderticks">
                     <p>precise</p>
                     <p></p>
@@ -75,7 +81,7 @@ class PrecisionSelector extends PolymerElement {
                 </div>
                 </figure>
                 <div class="display">
-                    <h2>width: [[ precision ]]<br/>cost: [[ cost ]]</h2>
+                    <h2>width: [[ precision ]]<br/>cost: [[ cost_round ]]</h2>
                 </div>
             </div>`;
     }
@@ -91,10 +97,11 @@ class PrecisionSelector extends PolymerElement {
         for(let x = 1; x <= this.scale; x++) {
             // scale back to 0 ~ 1 for calculating costs (y-coordinates)
             let xs = parseFloat((x/100).toFixed(2));
-            let val = parseFloat((-k * Math.log(xs)).toFixed(4)); 
+            let val = parseFloat((-k * Math.log(xs)).toFixed(4));
             data.push([x, val]);
         }
         return data;
+
     }
 
     _updateSelected() {
@@ -104,13 +111,19 @@ class PrecisionSelector extends PolymerElement {
         point.select();
         this.graphObj.tooltip.refresh(point);
         this.cost = point.y;
+        if(point.y < .01)
+          this.cost_round = .01;
+        else
+          this.cost_round = Math.round(point.y * 100)/100;
     }
 
     _initHighchart() {
         this.graphObj = Highcharts.chart({
             chart: {
                 renderTo: this.$.chart,
-                marginLeft: 50
+            marginLeft: 50
+            // Fix visual bug
+
             },
             tooltip: {
                 crosshairs: true,
@@ -129,10 +142,10 @@ class PrecisionSelector extends PolymerElement {
             yAxis: {
                 title: {
                     text: 'Cost',
-                    margin: 30,
                     style: {
                         fontSize: '20px'
                     },
+                    margin: 30
                 }
             },
             xAxis: {
@@ -169,7 +182,7 @@ class PrecisionSelector extends PolymerElement {
                 rules: [{
                     condition: {
                         maxWidth: 1000
-                    },  
+                    },
                     chartOptions: {
                         legend: {
                             layout: 'horizontal',
