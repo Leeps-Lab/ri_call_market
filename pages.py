@@ -104,7 +104,7 @@ class EndBlock(Page):
 class pause(Page):
     def is_displayed(self):
         try:
-            return (self.subsession.config.get('round')) == 24
+            return (self.subsession.config.get('round')) == 8
         except:
             return False
 class payment_page(Page):
