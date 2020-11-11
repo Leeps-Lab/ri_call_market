@@ -101,6 +101,12 @@ class EndBlock(Page):
             'round_1': round((self.player.in_round(self.subsession.config.get('round') - 7).round_payoff), 2),
 
             }
+class pause(Page):
+    def is_displayed(self):
+        try:
+            return (self.subsession.config.get('round')) == 24
+        except:
+            return False
 class payment_page(Page):
     def is_displayed(self):
         try:
@@ -124,4 +130,4 @@ class payment_page(Page):
         }
 
 
-page_sequence = [block_page, MainPage, ResultsWaitPage, Results, EndBlock, payment_page]
+page_sequence = [block_page, MainPage, ResultsWaitPage, Results, EndBlock, pause, payment_page]
