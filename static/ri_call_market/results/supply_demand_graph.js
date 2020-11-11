@@ -34,46 +34,44 @@ class SupplyDemandGraph extends PolymerElement {
     }
 
     /** configures bid and ask price points for transactions colors (red/green), 
-    * and adds dummy points to start and end steps with vertical lines */ 
+    * and adds dummy points to start and end steps with vertical lines */
     _getPricePoints(prices, price) {
         let data = [];
         if (price === undefined)
             return data;
         // dummy point for leftmost vertical line step
-        if (prices[0] <= prices[prices.length - 1]) {
+        if (prices[0] <= prices[prices.length - 1])
             data.push({
                 x: 0,
                 y: 0,
                 tooltip: false,
-            });       
-         } else {
+            });
+        else
             data.push({
                 x: 0,
                 y: 100,
                 tooltip: false,
             });
-        }
-        // console.log(price, this.buyPrice, this.sellPrice, this.bought, this.sold);
         for (let i = 0; i < prices.length; i++) {
             // marker on player's submitted price
-            if (price && prices[i] === price) {
+            if (price && prices[i] === price)
                 data.push({
-                    x: i+1,
+                    x: i + 1,
                     y: prices[i],
                 });
-            } else
-                data.push([i+1, prices[i]]);
+            else
+                data.push([i + 1, prices[i]]);
             // place clearing price with proper x coordinate
-            if ((prices[i-1] === this.q || (!prices.includes(this.q) && i && prices[i-1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
-            this.clearing_price.push({
-                x: i-1,
-                y: this.q,
-                marker: {
-                    symbol: 'url(../../../../../static/ri_call_market/shared/clearing_price.png)',
-                    width: 25,
-                    height: 25,
-                }
-            });
+            if ((prices[i - 1] === this.q || (!prices.includes(this.q) && i && prices[i - 1] < this.q && this.q > prices[i])) && this.clearing_price.length == 0)
+                this.clearing_price.push({
+                    x: i - 1,
+                    y: this.q,
+                    marker: {
+                        symbol: 'url(../../../../../static/ri_call_market/shared/clearing_price.png)',
+                        width: 25,
+                        height: 25,
+                    }
+                });
         }
         // dummy point for rightmost vertical line step
         if (prices[0] <= prices[prices.length - 1])
@@ -89,7 +87,7 @@ class SupplyDemandGraph extends PolymerElement {
         let color = '#DF5353';
         if (price === this.buyPrice && this.bought || price === this.sellPrice && this.sold)
             color = '#55BF3B';
-        let index =  prices.indexOf(price);
+        let index = prices.indexOf(price);
         // avoids including the vertical step in the colored zone (horizontal line only)
         let startZone = index - 0.985;
         let endZone = index - 0.015;
@@ -100,7 +98,6 @@ class SupplyDemandGraph extends PolymerElement {
             value: endZone,
             color: color,
         });
-
         return zones;
     }
 
@@ -108,7 +105,6 @@ class SupplyDemandGraph extends PolymerElement {
         Highcharts.setOptions({
             colors: ['#2F3238', '#007bff', 'orange'],
         });
-
         this.graphObj = Highcharts.chart({
             chart: {
                 renderTo: this.$.chart,
@@ -116,15 +112,12 @@ class SupplyDemandGraph extends PolymerElement {
             title: {
                 text: 'Supply/Demand'
             },
-            subtitle: {
-                text: ''
-            },
             xAxis: {
                 min: 0,
                 max: Math.max(this.bids.length, this.asks.length),
             },
             yAxis: {
-                min: 0, 
+                min: 0,
                 max: 100, // TODO: hardcoded with dummy points, may need to pass in params e.g. initial endowment
                 title: {
                     text: 'Bid/Ask Price'
@@ -142,10 +135,10 @@ class SupplyDemandGraph extends PolymerElement {
                     }
                     let formats = [];
                     formats.push(this.x);
-                    this.points.forEach(function(point) {
+                    this.points.forEach(function (point) {
                         formats.push('<b>' + point.series.name + '</b>: ' + point.y);
-                    })                     
-                    return formats;          
+                    })
+                    return formats;
                 },
                 split: true,
                 distance: 30,
@@ -172,6 +165,12 @@ class SupplyDemandGraph extends PolymerElement {
                 name: 'Bond Price',
                 data: this.clearing_price,
             }],
+        });
+        // plots vertical line at clearing price
+        this.graphObj.xAxis[0].addPlotLine({
+            value: this.clearing_price[0].x,
+            color: 'orange',
+            width: 2,
         });
     }
 }

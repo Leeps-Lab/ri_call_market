@@ -105,7 +105,8 @@ class Results extends PolymerElement {
                         Bond price: <span class="price-val">[[ q ]]</span>.
                         <span hidden$="[[ sellOption ]]">You [[ _getBuy(bought) ]].</span>
                         <span hidden$="[[ buyOption ]]">You [[ _getSell(sold) ]].</span>
-                        <span hidden$="[[ _hideOption(buyOption, sellOption) ]]">You [[ _getBuy(bought) ]] and [[ _getSell(sold) ]].</span>
+                        <span hidden$="[[ _hideSellBuy(buyOption, sellOption, sold) ]]">You [[ _getSell(sold) ]] and [[ _getBuy(bought) ]].</span>
+                        <span hidden$="[[ _hideBuySell(buyOption, sellOption, sold) ]]">You [[ _getBuy(bought) ]] and [[ _getSell(sold) ]].</span>
                         You now have [[ numBonds ]] bonds.
                     </h4>
                 </div>
@@ -212,12 +213,20 @@ class Results extends PolymerElement {
         return f;
     }
 
-    _hideOption(buyOption, sellOption) {
-        if (buyOption && sellOption)
-            return false;
-        else
+    _hideSellBuy(buyOption, sellOption, sold) {
+        if (buyOption && sellOption) {
+            return !sold;
+        } else
             return true;
     }
+
+    _hideBuySell(buyOption, sellOption, sold) {
+        if (buyOption && sellOption) {
+            return sold;
+        } else
+            return true;
+    }
+
 }
 
 window.customElements.define('results-page', Results);
