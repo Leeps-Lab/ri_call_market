@@ -81,7 +81,7 @@ class PrecisionSelector extends PolymerElement {
                 </div>
                 </figure>
                 <div class="display">
-                    <h2>width: [[ precision ]]<br/>cost: [[ cost_round ]]</h2>
+                    <h2>width: [[ precision ]]<br/>cost: [[ cost ]]</h2>
                 </div>
             </div>`;
     }
@@ -112,9 +112,9 @@ class PrecisionSelector extends PolymerElement {
         this.graphObj.tooltip.refresh(point);
         this.cost = point.y;
         if(point.y < .01)
-          this.cost_round = .01;
+          this.cost = .01;
         else
-          this.cost_round = Math.round(point.y * 100)/100;
+          this.cost = Math.round(point.y * 100)/100;
     }
 
     _initHighchart() {
