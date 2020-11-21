@@ -101,6 +101,26 @@ class SupplyDemandGraph extends PolymerElement {
         return zones;
     }
 
+    _getVerticalColor() {
+        if (this.bids.length > this.asks.length)
+            return '#007bff';
+        if (this.asks.length > this.bids.length)
+            return '#2F3238';
+        return '#FFFFFF';
+    }
+
+    _getBidsLabel() {
+        if (this.bids.length <= 1)
+            return 'Demand Line';
+        return 'Demand Line/Bid Price';
+    }
+
+    _getAsksLabel() {
+        if (this.asks.length <= 1)
+            return 'Supply Line';
+        return 'Supply Line/Ask Price';
+    }
+
     _initHighchart() {
         Highcharts.setOptions({
             colors: ['#2F3238', '#007bff', 'orange'],
@@ -151,12 +171,12 @@ class SupplyDemandGraph extends PolymerElement {
                 },
             },
             series: [{
-                name: 'Bid Price',
+                name: this._getBidsLabel(),
                 data: this._getPricePoints(this.bids, this.buyPrice),
                 zoneAxis: 'x',
                 zones: this._getColorZones(this.bids, this.buyPrice),
             }, {
-                name: 'Ask Price',
+                name: this._getAsksLabel(),
                 data: this._getPricePoints(this.asks, this.sellPrice),
                 zoneAxis: 'x',
                 zones: this._getColorZones(this.asks, this.sellPrice),
@@ -169,8 +189,8 @@ class SupplyDemandGraph extends PolymerElement {
         // plots vertical line at clearing price
         this.graphObj.xAxis[0].addPlotLine({
             value: this.clearing_price[0].x,
-            color: 'orange',
-            width: 2,
+            color: this._getVerticalColor(),
+            width: 4,
         });
     }
 }
