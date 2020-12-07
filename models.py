@@ -26,8 +26,12 @@ def parse_config(config):
         for row in rows:
             rounds.append({
                 'round': int(row['round']) if row['round'] else 0,
+                'total_rounds': int(row['total_rounds']) if row['total_rounds'] else 0,
+                'block_total': int(row['block_total']) if row['block_total'] else 0,
                 'participation_fee': float(row['participation_fee']) if row.get('participation_fee') else 100,
+                'bonus': False if row.get('bonus') == 'False' else True,
                 'initial_bonds': int(row['initial_bonds']) if row.get('initial_bonds') else 1,
+                'pause_page': False if row.get('pause_page') == 'False' else True,
                 'buy_option': False if row.get('buy_option') == 'False' else True,
                 'sell_option': False if row.get('sell_option') == 'False' else True,
                 'g': int(row['g']) if row.get('g') else int(random.uniform(0, 100)),
@@ -41,8 +45,9 @@ def parse_config(config):
 class Constants(BaseConstants):
     name_in_url = 'ri_call_market'
     players_per_group = None
-    num_rounds=30
-
+    num_rounds = 99
+    def total_rounds(self):
+        return self.config.get('total_rounds')
     def round_number(self):
         return len(parse_config(self.session.config['config_file']))
 
@@ -59,6 +64,7 @@ class Subsession(BaseSubsession):
     m = models.IntegerField()
     y = models.IntegerField()
     q = models.IntegerField()
+    block_total = models.IntegerField()
     expected_value = models.FloatField()
     default = models.BooleanField()
     buy_option = models.BooleanField()
@@ -127,6 +133,22 @@ class Subsession(BaseSubsession):
     def num_rounds(self):
         return len(parse_config(self.session.config['config_file']))
 
+    def block_total(self):
+        if self.block_total is None:
+            self.block_total = self.config.get('block_total')
+            self.save()
+        return self.block_total
+
+    def bonus(self):
+        if self.bonus is None:
+            self.bonus = self.config.get('bonus')
+            self.save()
+        return self.bonus
+    def pause_page(self):
+        if self.pause_page is None:
+            self.pause_page = self.config.get('pause_page')
+            self.save()
+        return self.pause_page
 
     @property
     def config(self):
