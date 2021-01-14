@@ -112,13 +112,13 @@ class EndBlock(Page):
 class pause(Page):
     def is_displayed(self):
         try:
-            return (self.subsession.config.get('pause_page'))
+            return (self.subsession.config.get('pause_page  '))
         except:
             return False
 class payment_page(Page):
     def is_displayed(self):
         try:
-            return self.subsession.config.get('round') == 24
+            return self.subsession.config.get('round') == 5
         except:
             return False
     def vars_for_template(self):
