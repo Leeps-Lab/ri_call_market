@@ -8,18 +8,20 @@ from . import parser as parser_py
 class block_page(Page):
     def is_displayed(self):
         try:
-            return int(self.subsession.config.get('round'))%5 == 1
+            return int(self.subsession.config.get('round'))%self.subsession.config.get('block_total') == 1
         except:
             return False
     def vars_for_template(self):
-        try:
-            participation_cost =  round(self.subsession.in_round(self.subsession.config.get('round')).config.get('participation_fee') +self.subsession.in_round(self.subsession.config.get('round') + 1).config.get('participation_fee') +self.subsession.in_round(self.subsession.config.get('round') + 2).config.get('participation_fee') + self.subsession.in_round(self.subsession.config.get('round') + 3).config.get('participation_fee') + self.subsession.in_round(self.subsession.config.get('round') + 4).config.get('participation_fee'),2)
-        except:
-            participation_cost = round(self.subsession.in_round(self.subsession.config.get('round')).config.get('participation_fee'),2)
-        return{
-            'block_num': int(self.subsession.config.get('round')/5) +1,
-            'Participation_cost': participation_cost,
-            }
+        #calculte total block payment fee
+        participation = 0
+        i = 0
+        while (i < self.subsession.config.get('block_total')):
+            participation += round(self.subsession.in_round(self.subsession.config.get('round') + i ).config.get('participation_fee'),2)
+            i += 1
+        return {
+        'Participation_cost': participation,
+        'block_num': int(self.subsession.config.get('round')/self.subsession.config.get('block_total')) +1
+        }
 
 class MainPage(Page):
     timeout_seconds = 180
@@ -78,36 +80,45 @@ class Results(Page):
 class EndBlock(Page):
     def is_displayed(self):
         try:
-            return (self.subsession.config.get('round'))%5 == 0
+            return (self.subsession.config.get('round'))%self.subsession.config.get('block_total') == 0
         except:
             return False
 
     def vars_for_template(self):
-        Participation_cost = round(self.subsession.in_round(self.subsession.config.get('round')).config.get('participation_fee') +self.subsession.in_round(self.subsession.config.get('round') - 1).config.get('participation_fee') +self.subsession.in_round(self.subsession.config.get('round') - 2).config.get('participation_fee') + self.subsession.in_round(self.subsession.config.get('round') - 3).config.get('participation_fee') + self.subsession.in_round(self.subsession.config.get('round') - 4).config.get('participation_fee'),2)
-
-        total_round_payoff = round((self.player.in_round(self.subsession.config.get('round')).round_payoff + self.player.in_round(self.subsession.config.get('round') - 1).round_payoff + self.player.in_round(self.subsession.config.get('round') - 2).round_payoff + self.player.in_round(self.subsession.config.get('round') - 3).round_payoff + self.player.in_round(self.subsession.config.get('round') - 4).round_payoff),2)
+        #Calculate total payoff
+        i = 0
+        total_round_payoff = 0
+        while (i < self.subsession.config.get('block_total')):
+            total_round_payoff += round((self.player.in_round(self.subsession.config.get('round') - i ).round_payoff), 2)
+            i += 1
+        i = 0
+        #calculate total participation cost
+        Participation_cost  = 0
+        while (i < self.subsession.config.get('block_total')):
+            Participation_cost += round(self.subsession.in_round(self.subsession.config.get('round') - i).config.get('participation_fee'),2)
+            i += 1
         return{
             'block_num': int(self.subsession.config.get('round')/5),
             'Participation_cost': Participation_cost,
             'total_round_payoff': total_round_payoff,
             'total_payoff': round(total_round_payoff  - Participation_cost,2),
-            'round_5': round((self.player.in_round(self.subsession.config.get('round')).round_payoff), 2),
-            'round_4': round((self.player.in_round(self.subsession.config.get('round') - 1).round_payoff), 2),
-            'round_3': round((self.player.in_round(self.subsession.config.get('round') - 2).round_payoff), 2),
-            'round_2': round((self.player.in_round(self.subsession.config.get('round') - 3).round_payoff), 2),
-            'round_1': round((self.player.in_round(self.subsession.config.get('round') - 4).round_payoff), 2),
+            'round_4': round((self.player.in_round(self.subsession.config.get('round')).round_payoff), 2),
+            'round_3': round((self.player.in_round(self.subsession.config.get('round') - 1).round_payoff), 2),
+            'round_2': round((self.player.in_round(self.subsession.config.get('round') - 2).round_payoff), 2),
+            'round_1': round((self.player.in_round(self.subsession.config.get('round') - 3).round_payoff), 2),
+
 
             }
 class pause(Page):
     def is_displayed(self):
         try:
-            return (self.subsession.config.get('round')) == 15
+            return (self.subsession.config.get('pause_page'))
         except:
             return False
 class payment_page(Page):
     def is_displayed(self):
         try:
-            return self.subsession.config.get('round') == 30
+            return self.subsession.config.get('round') == 24
         except:
             return False
     def vars_for_template(self):
@@ -123,8 +134,8 @@ class payment_page(Page):
         ##function to sum total participation fees
         return{
             'player_id': self.player.id_in_group,
-            'total_payoff': round((payment_payoff - participation_fee_total)*.5,2)
+            'total_payoff': round((payment_payoff - participation_fee_total)*.25,2)
         }
 
 
-page_sequence = [block_page, MainPage, ResultsWaitPage, Results, EndBlock, pause, payment_page]
+page_sequence = [MainPage, ResultsWaitPage, Results,  pause, payment_page]
