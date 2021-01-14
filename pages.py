@@ -98,7 +98,7 @@ class EndBlock(Page):
             Participation_cost += round(self.subsession.in_round(self.subsession.config.get('round') - i).config.get('participation_fee'),2)
             i += 1
         return{
-            'block_num': int(self.subsession.config.get('round')/5),
+            'block_num': int(self.subsession.config.get('round')/4),
             'Participation_cost': Participation_cost,
             'total_round_payoff': total_round_payoff,
             'total_payoff': round(total_round_payoff  - Participation_cost,2),
@@ -112,13 +112,13 @@ class EndBlock(Page):
 class pause(Page):
     def is_displayed(self):
         try:
-            return (self.subsession.config.get('pause_page  '))
+            return (self.subsession.config.get('pause_page'))
         except:
             return False
 class payment_page(Page):
     def is_displayed(self):
         try:
-            return self.subsession.config.get('round') == 5
+            return self.subsession.config.get('round') == 24
         except:
             return False
     def vars_for_template(self):
@@ -138,4 +138,4 @@ class payment_page(Page):
         }
 
 
-page_sequence = [MainPage, ResultsWaitPage, Results,  pause, payment_page]
+page_sequence = [block_page, MainPage, ResultsWaitPage, Results, EndBlock, pause, payment_page]
