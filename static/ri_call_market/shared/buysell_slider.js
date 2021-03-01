@@ -23,11 +23,9 @@ class BuysellSlider extends PolymerElement {
                 value: [0, , , , , 100],
             },
             priceToShow: Number,
-            animatePrice: Boolean,
-            disableSelect: {
+            animatePrice: {
                 type: Boolean,
-                value: true,
-            }
+            },
         }
     }
 
@@ -106,12 +104,12 @@ class BuysellSlider extends PolymerElement {
             <price-marker
                 id="price"
                 value="[[ priceToShow ]]"
-                style$="left: [[ _getMark(priceToShow) ]]%;"
-                hidden="[[ hideBeforeSubmit ]]"
+                style$="left: {{ _getMark(priceToShow) }}%;"
+                hidden$="[[ _hidePrice(hideBeforeSubmit, animatePrice) ]]"
             ></price-marker>
             </div>
             <div class="markers">
-                <span id="anim" class$="[[ _showActualPrice(animatePrice, priceToShow, hideBeforeSubmit) ]]" hidden$="[[ _hidePrice(hideBeforeSubmit, animatePrice) ]]"></span> 
+                <span id="anim" class$="[[ _showActualPrice(animatePrice, priceToShow, hideBeforeSubmit) ]]" hidden$="[[ _hidePrice(hideBeforeSubmit, animatePrice) ]]"></span>
             </div>
             <div class="sliderticks">
                 <template is="dom-repeat" items="[[ markers ]]">
@@ -169,7 +167,46 @@ class BuysellSlider extends PolymerElement {
 
     _showActualPrice(animatePrice, priceToShow, hideBeforeSubmit) {
         let pos = (this._getMark(priceToShow)).toString() + '%';
-        this.$.anim.animate([
+        if (animatePrice) {
+            // back and forth
+            let anim = this.$.anim.animate([
+                { left: '50%' },
+                { left: '100%' },
+                { left: 0 },
+            ], {
+                duration: 1000,
+                easing: 'ease-in-out', // 'linear', a bezier curve, etc.
+                delay: 1000, // milliseconds
+                direction: 'alternate', // 'normal', 'reverse', etc.
+                fill: 'forwards'
+            });
+
+            // stops at more accurate position above marker
+           anim.onfinish = () => {
+                this.$.anim.animate([
+                    { left: 0 },
+                    { left: pos },
+                ], {
+                    duration: 2000,
+                    easing: 'ease-in-out',
+                    direction: 'alternate',
+                    fill: 'forwards'
+                });
+                // show price marker right after
+                this.$.price.animate([
+                    { opacity: 0 },
+                    { opacity: 1 },
+                ], {
+                    duration: 2000,
+                    easing: 'ease-in',
+                    delay: 1000,
+                    fill: 'forwards'
+                });
+            }
+            return 'ball';
+        }
+        else if (!hideBeforeSubmit) {
+            this.$.anim.animate([
                 { opacity: 0 },
                 { opacity: 1 },
                 { left: pos },
@@ -179,16 +216,26 @@ class BuysellSlider extends PolymerElement {
                 fill: 'forwards'
             });
             // show price marker right after
+            // this is what's causing the marker to appear beforehand
             this.$.price.animate([
                 { left: pos },
                 { opacity: 0 },
                 { opacity: 1 },
+                { opacity: 1 },
+                { opacity: 1 },
+                { opacity: 1 },
+                { opacity: 1 },
+                { opacity: 1 },
+                { opacity: 1 },
             ], {
-                duration: 2000,
-                easing: 'ease-in',
-                fill: 'forwards'
+                duration: 4000,
+                easing: 'ease-in-out',
+
+
             });
-        return 'ball';
+            return 'ball';
+        }
+        return 'ball hid';
     }
 
     _getMark(val) {

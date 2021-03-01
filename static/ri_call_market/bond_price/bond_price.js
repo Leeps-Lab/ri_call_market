@@ -86,6 +86,12 @@ class BondPrice extends PolymerElement {
             .buy {
                 color: #2F3238;
             }
+            #buy_warning {
+                color: red;
+            }
+            #sell_warning {
+                color: red;
+            }
             .sell {
                 color: #007bff;
             }
@@ -107,39 +113,47 @@ class BondPrice extends PolymerElement {
         <h3>Your private information about m: [[ mLow ]] <span>&#8804;</span> m <span>&#8804;</span> [[ mHigh ]]</h3>
 
         <h4 hidden$="[[ sellOption ]]">Select the price for which you'd like to <span class="buy val">buy</span> the bond by sliding
-        <img src="../../../../../static/ri_call_market/shared/buy_marker.png" alt="buy marker failed to load :(">
+        <img src="../../../../../static/rational_inattention/shared/buy_marker.png" alt="buy marker failed to load :(">
         <span class="buy val">(bid)</span>.</h4>
 
         <h4 hidden$="[[ buyOption ]]">Select the price for which you'd like to <span class="sell val">sell</span> the bond by sliding
-        <img src="../../../../../static/ri_call_market/shared/sell_marker.png" alt="buy marker failed to load :(">
+        <img src="../../../../../static/rational_inattention/shared/sell_marker.png" alt="buy marker failed to load :(">
         <span class="sell val">(ask)</span>.</h4>
 
         <p class = "buy-sell-text" hidden$="[[ _hideOption(buyOption, sellOption) ]]">
             Select the price for which you'd like to <span class="buy val">buy</span> the bond by sliding
-        <img src="../../../../../static/ri_call_market/shared/buy_marker.png" alt="buy marker failed to load :(">
+        <img src="../../../../../static/rational_inattention/shared/buy_marker.png" alt="buy marker failed to load :(">
         <span class="buy val">(bid)</span>, and the price for which you'd like to <span class="sell val">sell</span>
         the bond by sliding
-        <img src="../../../../../static/ri_call_market/shared/sell_marker.png" alt="buy marker failed to load :(">
+        <img src="../../../../../static/rational_inattention/shared/sell_marker.png" alt="buy marker failed to load :(">
         <span class="sell val">(ask)</span>.</p>
 
-        <p>Lowest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
-        * [[ mLow ]] = <span class="low val">[[ lowValue ]]</span></p>
-        <p>Highest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
-        * [[ mHigh ]] = <span class="high val">[[ highValue ]]</span></p>
+           <!-- <p>Assuming you don't care about uncertainty, you would expect:</p> -->
+            <p>Lowest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
+            * [[ mLow ]] = <span class="low val">[[ lowValue ]]</span></p>
+            <p>Highest expected bond value: <span class="non-def">[[ _getNondefault(defaultProb) ]]%</span> * 100 + <span class="def">[[ defaultProb ]]%</span>
+            * [[ mHigh ]] = <span class="high val">[[ highValue ]]</span></p>
 
             <buysell-slider
+                class="slider"
                 m="[[ m ]]"
-                max="[[ participation_fee ]]"
                 low-value="[[ lowValue ]]"
                 high-value="[[ highValue ]]"
-                buy-option="[[ buyOption ]]"
-                sell-option="[[ sellOption ]]"
+                buy-option="{{ buyOption }}"
+                sell-option="{{ sellOption }}"
                 buy-price="{{ buyPrice }}"
                 sell-price="{{ sellPrice }}"
-                hide-before-submit
+                hide-before-submit="{{ hideBeforeSubmit }}"
+                price-to-show="[[ expectedValue ]]"
                 disable-select="[[ disableSelect ]]"
+                animate-price="[[ animatePrice ]]"
             ></buysell-slider>
-
+            <div id="buy_warning" hidden$ = "[[ _hide_buy_Warning(buyPrice) ]]">
+                <p>Warning: your bid node currently rests at the default position.</p>
+            </div>
+            <div id="sell_warning" hidden$ ="[[ _hide_sell_Warning(sellPrice) ]]" >
+                <p> Warning: your ask node currently rests at the default position. </p>
+            </div>
             <div id="substep" hidden$="[[ _hideM(hideBeforeSubmit) ]]">
                 <h2>Actual m: [[ m ]]</h2>
                 <h3>Expected bond value:
@@ -150,6 +164,41 @@ class BondPrice extends PolymerElement {
         </div>
         `;
     }
+
+    _hideM(hideBeforeSubmit) {
+        if(!hideBeforeSubmit) {
+            this.$.substep.animate([
+                { opacity: 0 },
+                { opacity: 1 },
+            ], {
+                duration: 1000, // milliseconds
+                easing: 'ease-in',
+                fill: 'forwards',
+            });
+        }
+        return hideBeforeSubmit;
+    }
+    _hide_buy_Warning(buyPrice) {
+      if(this.buyOption) {
+        if(buyPrice == 0)
+          return false;
+          else
+            return true;
+        }
+        else
+          return true;
+      }
+
+    _hide_sell_Warning(sellPrice) {
+      if(this.sellOption) {
+        if(sellPrice == 100)
+          return false;
+          else
+            return true;
+        }
+        else
+          return true;
+      }
 
     _hideOption(buyOption, sellOption) {
         // buy = 0, sell = 1

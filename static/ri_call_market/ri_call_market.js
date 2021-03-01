@@ -14,7 +14,7 @@ class RICallMarket extends PolymerElement {
                 value: 0,
                 observer: function (step, isResultPage) {
                     setTimeout(function () {
-                        if (step && step <= 4 && !isResultPage) {  // auto scroll down to next step/screen
+                        if (step && step <= 5 && !isResultPage) {  // auto scroll down to next step/screen
                             window.scrollBy({ top: 480, behavior: 'smooth' });
                         }
                     }, 500);
@@ -128,6 +128,8 @@ class RICallMarket extends PolymerElement {
                         sell-price="{{ askPrice }}"
                         expected-value="{{ expectedVal }}"
                         disable-select="[[ _disableStep(step, 2) ]]"
+                        hide-before-submit="{{ _hideStep(step, 3) }}"
+                        animate-price="[[ _animatePrice(2) ]]"
                     ></bond-price>
                 </div>
             </div>
@@ -217,11 +219,11 @@ class RICallMarket extends PolymerElement {
         else
             this.buttonLabel = 'Next';
         // determines when bid/ask prices submitted to hide button
-        return step > 2;
+        return step > 3;
     }
 
     _animatePrice(step) {
-        return step == 4;
+        return step == 5;
     }
 }
 
