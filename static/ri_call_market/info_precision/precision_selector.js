@@ -70,7 +70,7 @@ class PrecisionSelector extends PolymerElement {
             <div class="container">
                 <figure class="highcharts-figure">
                 <div id="chart"></div>
-                <input type="range" min="0" max=[[ scale ]] step="20" value="{{ precision::input }}" disabled$="[[ disableSelect ]]" >
+                <input type="range" min="0" max=[[ scale ]] step ="20" value="{{ precision::input }}" disabled$="[[ disableSelect ]]" >
                 <div class="sliderticks">
                     <p>precise</p>
                     <p></p>
@@ -98,8 +98,7 @@ class PrecisionSelector extends PolymerElement {
             // scale back to 0 ~ 1 for calculating costs (y-coordinates)
             let xs = parseFloat((x/100).toFixed(2));
             let val = parseFloat((-k * Math.log(xs)).toFixed(4));
-            data.push([x, val]);
-            if(x == 100 || x == 80 || x == 60 || x == 40 || x == 20 || x == 1) {
+            if(x == 100 || x == 80 ||x == 60 || x == 40 || x == 20 || x == 1) {
               data.push({
                   x: x,
                   y: val,
@@ -110,10 +109,14 @@ class PrecisionSelector extends PolymerElement {
 
               });
             }
+            else {
+              data.push([x, val]);
+            }
         }
         return data;
 
     }
+
     _updateSelected() {
         if (!this.graphObj)
             return;
@@ -122,7 +125,7 @@ class PrecisionSelector extends PolymerElement {
         this.graphObj.tooltip.refresh(point);
         this.cost = point.y;
         if(point.y < .01)
-          this.cost_round = .01;
+          this.cost_round = 0;
         else
           this.cost_round = Math.round(point.y * 100)/100;
     }
@@ -157,7 +160,7 @@ class PrecisionSelector extends PolymerElement {
                     style: {
                         fontSize: '20px'
                     },
-                    margin: 30
+
                 }
             },
             xAxis: {
