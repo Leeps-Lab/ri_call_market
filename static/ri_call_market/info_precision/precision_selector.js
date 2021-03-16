@@ -11,6 +11,12 @@ class PrecisionSelector extends PolymerElement {
                 notify: true,
                 reflectToAttribute: true,
             },
+            zeroprecision: {
+                type: Number,
+                value: 100,
+                notify: true,
+                reflectToAttribute: true,
+            },
             cost: {
                 type: Number,
                 value: 0,
@@ -81,7 +87,7 @@ class PrecisionSelector extends PolymerElement {
                 </div>
                 </figure>
                 <div class="display">
-                    <h2>width: [[ precision ]]<br/>cost: [[ cost_round ]]</h2>
+                    <h2>width: [[ zeroprecision ]]<br/>cost: [[ cost_round ]]</h2>
                 </div>
             </div>`;
     }
@@ -106,11 +112,26 @@ class PrecisionSelector extends PolymerElement {
                     enabled: true,
                     radius: 8,
                   },
+                  tooltip: {
+                      enabled: true,
+                      crosshairs: true,
+                      formatter: function() {
+                          return 'Width: ' + this.point.x + '<br/>Cost: ' + this.point.y;
+                      },
+                      valueSuffix: ' credits',
+                      style: {
+                          width: '500px',
+                          fontSize: '16px'
+                      }
+                  },
 
               });
             }
             else {
               data.push([x, val]);
+            }
+            if( x == 1) {
+              data.push([0,val]);
             }
         }
         return data;
@@ -120,14 +141,23 @@ class PrecisionSelector extends PolymerElement {
     _updateSelected() {
         if (!this.graphObj)
             return;
-        const point = this.graphObj.series[0].data[this.precision - 1];
+        const point = this.graphObj.series[0].data[this.precision];
         point.select();
         this.graphObj.tooltip.refresh(point);
         this.cost = point.y;
-        if(point.y < .01)
+        //Change later
+        if(point.y < 1)
           this.cost_round = 0;
         else
           this.cost_round = Math.round(point.y * 100)/100;
+        if (this.precision == 0) {
+            this.zeroprecision = 1;
+            this.precision = 1;
+          }
+        else {
+          this.zeroprecision = this.precision;
+        }
+
     }
 
 
@@ -139,9 +169,13 @@ class PrecisionSelector extends PolymerElement {
             // Fix visual bug
             },
             tooltip: {
+                enabled: true,
                 crosshairs: true,
                 formatter: function() {
-                    return 'Width: ' + this.point.x + '<br/>Cost: ' + this.point.y;
+                    if(this.point.x == 1 || this.point.x == 20 || this.point.x == 40 || this.point.x == 60 || this.point.x ==80 || this.point.x ==100) {
+                        return 'Width: ' + this.point.x + '<br/>Cost: ' + Math.round(this.point.y * 100)/100;
+                    }
+
                 },
                 valueSuffix: ' credits',
                 style: {
@@ -154,7 +188,7 @@ class PrecisionSelector extends PolymerElement {
             },
             yAxis: {
                 min: 0,
-                max: 100,
+                max: 25,
                 title: {
                     text: 'Cost',
                     style: {
