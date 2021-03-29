@@ -145,11 +145,7 @@ class PrecisionSelector extends PolymerElement {
         point.select();
         this.graphObj.tooltip.refresh(point);
         this.cost = point.y;
-        //Change later
-        if(point.y < 1)
-          this.cost_round = 0;
-        else
-          this.cost_round = Math.round(point.y * 100)/100;
+        this.cost_round = Math.round(point.y * 100)/100;
         if (this.precision == 0) {
             this.zeroprecision = 1;
             this.precision = 1;
