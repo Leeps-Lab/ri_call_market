@@ -12,9 +12,9 @@ class RICallMarket extends PolymerElement {
             step: {
                 type: Number,
                 value: 0,
-                observer: function (step, isResultPage) {
+                observer: function (step) {
                     setTimeout(function () {
-                        if (step && step <= 5 && !isResultPage) {  // auto scroll down to next step/screen
+                        if (step && step < 3) {  // auto scroll down to next step/screen
                             window.scrollBy({ top: 480, behavior: 'smooth' });
                         }
                     }, 500);
@@ -63,7 +63,6 @@ class RICallMarket extends PolymerElement {
                 type: String,
                 value: 'Next',
             },
-            isResultPage: Boolean,
             bids: {
                 type: Array,
                 value: []
@@ -96,85 +95,43 @@ class RICallMarket extends PolymerElement {
                     width: 50px;
                 }
             </style>
-            <div class="main-page" hidden$="{{ isResultPage }}">
-                <div class="first">
-                <public-info
-                        g="[[ g ]]"
-                        credits="[[ participation_fee ]]"
-                    ></public-info>
-                </div>
-                <div hidden$="{{ _hideStep(step, 1) }}">
-                    <info-precision
-                        k="[[ k ]]"
-                        precision="{{ precision }}"
-                        cost="{{ cost }}"
-                        disable-select="{{ _disableStep(step, 1) }}"
-                    ></info-precision>
-                </div>
-                <div class="step" hidden$="{{ _hideStep(step, 2) }}">
-                    <bond-price
-                        g="[[ g ]]"
-                        m="[[ m ]]"
-                        q="[[ q ]]"
-                        buy-option="[[ buyOption ]]"
-                        sell-option="[[ sellOption ]]"
-                        precision="[[ precision ]]"
-                        default-prob="[[ g ]]"
-                        m-low="{{ mLow }}"
-                        m-high="{{ mHigh }}"
-                        low-value="{{ lowValue }}"
-                        high-value="{{ highValue }}"
-                        buy-price="{{ bidPrice }}"
-                        sell-price="{{ askPrice }}"
-                        expected-value="{{ expectedVal }}"
-                        disable-select="[[ _disableStep(step, 2) ]]"
-                        hide-before-submit="{{ _hideStep(step, 3) }}"
-                        animate-price="[[ _animatePrice(2) ]]"
-                    ></bond-price>
-                </div>
+            <div class="first">
+            <public-info
+                    g="[[ g ]]"
+                    credits="[[ participation_fee ]]"
+                ></public-info>
             </div>
-            <div class="results-page" hidden$="{{ _hidePage() }}">
-                <supply-demand-graph
-                    bids="[[ bids ]]"
-                    asks="[[ asks ]]"
-                    buy-price="[[ bidPrice ]]"
-                    sell-price="[[ askPrice ]]"
-                    q="[[ q ]]"
-                    bought="[[ bought ]]"
-                    sold="[[ sold ]]"
-                ></supply-demand-graph>
-                <results-page
-                    participation_fee="[[ participation_fee ]]"
-                    bonds="[[ bonds ]]"
+            <div hidden$="{{ _hideStep(step, 1) }}">
+                <info-precision
+                    k="[[ k ]]"
+                    precision="{{ precision }}"
+                    cost="{{ cost }}"
+                    disable-select="{{ _disableStep(step, 1) }}"
+                ></info-precision>
+            </div>
+            <div class="step" hidden$="{{ _hideStep(step, 2) }}">
+                <bond-price
                     g="[[ g ]]"
                     m="[[ m ]]"
-                    y="[[ y ]]"
                     q="[[ q ]]"
                     buy-option="[[ buyOption ]]"
                     sell-option="[[ sellOption ]]"
-                    buy-price="[[ bidPrice ]]"
-                    sell-price="[[ askPrice ]]"
-                    low-value="[[ lowValue ]]"
-                    high-value="[[ highValue ]]"
-                    cost="[[ cost ]]"
-                    is-default="{{ default }}"
-                    bought="[[ bought ]]"
-                    sold="[[ sold ]]"
-                    bond-payment="{{ bondPayment }}"
-                    num-bonds="{{ numBonds }}"
-                    payoff="{{ payoff }}"
-                    hide-before-submit="[[ _hideStep(step, 5) ]]"
-                ></results-page>
+                    precision="[[ precision ]]"
+                    default-prob="[[ g ]]"
+                    m-low="{{ mLow }}"
+                    m-high="{{ mHigh }}"
+                    low-value="{{ lowValue }}"
+                    high-value="{{ highValue }}"
+                    buy-price="{{ bidPrice }}"
+                    sell-price="{{ askPrice }}"
+                    expected-value="{{ expectedVal }}"
+                    disable-select="[[ _disableStep(step, 2) ]]"
+                    hide-before-submit="{{ _hideStep(step, 3) }}"
+                    animate-price="[[ _animatePrice(2) ]]"
+                ></bond-price>
             </div>
         <paper-button class="btn" on-click="nextStep" hidden$="[[ _updateButtonLabel(step)]]">[[ buttonLabel ]]</paper-button>
        `;
-    }
-
-    _hidePage() {
-        if (this.isResultPage === undefined)
-            return true;
-        else
-            return !this.isResultPage;
     }
 
     nextStep() {
@@ -212,9 +169,7 @@ class RICallMarket extends PolymerElement {
     }
 
     _updateButtonLabel(step) {
-        if (this.isResultPage)
-            this.buttonLabel = 'Continue';
-        else if (step)
+        if (step)
             this.buttonLabel = 'Submit';
         else
             this.buttonLabel = 'Next';

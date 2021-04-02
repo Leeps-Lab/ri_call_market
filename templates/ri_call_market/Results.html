@@ -7,7 +7,7 @@
 
 {% block scripts %}
     <script src="{% static 'ri_call_market/highcharts.js' %}"></script>
-    <script type="module" src="{% static 'ri_call_market/ri_call_market.js' %}"></script>
+    <script type="module" src="{% static 'ri_call_market/results_page.js' %}"></script>
     <script>
         document.querySelector("#resultId").addEventListener('getPolymerData', function (customEvent) {
             customEvent.preventDefault();
@@ -20,7 +20,7 @@
 {% block content %}
 
     {% with config=subsession.config %}
-        <ri-call-market
+        <results-page
             id="resultId"
             g="{{ g }}"
             k="{{ k }}"
@@ -49,8 +49,7 @@
             {% if player.sold %}
                 sold
             {% endif %}
-            is-result-page
-        ></ri-call-market>
+        ></results-page>
         <button id="next_btn" class="otree-btn-next btn btn-primary">Submit</button>
 
     {% endwith %}

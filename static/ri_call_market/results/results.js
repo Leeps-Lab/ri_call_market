@@ -229,4 +229,4 @@ class Results extends PolymerElement {
 
 }
 
-window.customElements.define('results-page', Results);
+window.customElements.define('results-panel', Results);

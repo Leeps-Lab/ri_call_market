@@ -94,17 +94,17 @@ class BuysellSlider extends PolymerElement {
                 <price-marker
                 class="high"
                 value="[[ highValue ]]"
-                style$="left: [[ _getMark(highValue) ]]%;"
+                style$="left: [[ highValue ]]%;"
             ></price-marker>
             <price-marker
                 class="low"
                 value="[[ lowValue ]]"
-                style$="left: [[ _getMark(lowValue) ]]%;"
+                style$="left: [[ lowValue ]]%;"
             ></price-marker>
             <price-marker
                 id="price"
                 value="[[ priceToShow ]]"
-                style$="left: {{ _getMark(priceToShow) }}%;"
+                style$="left: {{ priceToShow }}%;"
                 hidden$="[[ _hidePrice(hideBeforeSubmit, animatePrice) ]]"
             ></price-marker>
             </div>
@@ -166,7 +166,7 @@ class BuysellSlider extends PolymerElement {
     }
 
     _showActualPrice(animatePrice, priceToShow, hideBeforeSubmit) {
-        let pos = (this._getMark(priceToShow)).toString() + '%';
+        let pos = priceToShow.toString() + '%';
         if (animatePrice) {
             // back and forth
             let anim = this.$.anim.animate([
@@ -236,10 +236,6 @@ class BuysellSlider extends PolymerElement {
             return 'ball';
         }
         return 'ball hid';
-    }
-
-    _getMark(val) {
-        return val;
     }
 
     _hideSlider(buyOption, sellOption) {
