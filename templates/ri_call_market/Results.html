@@ -12,7 +12,8 @@
         document.querySelector("#resultId").addEventListener('getPolymerData', function (customEvent) {
             customEvent.preventDefault();
             round_payoff.value = this.payoff;
-            $("[id='next_btn']")[0].click();
+                // submits bid/ask prices and moves to wait page until received all players' prices
+                $("[id='next_btn']")[0].click();
         });
     </script>
 

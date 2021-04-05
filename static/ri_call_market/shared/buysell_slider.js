@@ -23,8 +23,13 @@ class BuysellSlider extends PolymerElement {
                 value: [0, , , , , 100],
             },
             priceToShow: Number,
+            expectedValue: Number,
             animatePrice: {
                 type: Boolean,
+            },
+            hidden: {
+                type: Boolean,
+                value: true,
             },
         }
     }
@@ -42,6 +47,9 @@ class BuysellSlider extends PolymerElement {
                 }
                 #anim {
                     background-color: var(--price-color);
+                }
+                #expected {
+                    background-color: #F06292;
                 }
                 .ball {
                     position: absolute;
@@ -61,6 +69,9 @@ class BuysellSlider extends PolymerElement {
                     display: flex;
                     height: 16px;
                     margin: 0 24px 0 5px;
+                }
+                .expected {
+                    --mark-color: pink;
                 }
                 .high {
                     --mark-color: #CCCC00;
@@ -109,7 +120,9 @@ class BuysellSlider extends PolymerElement {
             ></price-marker>
             </div>
             <div class="markers">
-                <span id="anim" class$="[[ _showActualPrice(animatePrice, priceToShow, hideBeforeSubmit) ]]" hidden$="[[ _hidePrice(hideBeforeSubmit, animatePrice) ]]"></span>
+                <span id="expected" class$="[[ _showBall(expectedValue) ]]" hidden$="[[ hidden ]]"></span>
+                <span id="anim" class$="[[ _showActualPrice(animatePrice, priceToShow, hideBeforeSubmit) ]]" hidden$="[[ _hidePrice(hideBeforeSubmit, animatePrice)]]"></span>
+
             </div>
             <div class="sliderticks">
                 <template is="dom-repeat" items="[[ markers ]]">
@@ -164,7 +177,35 @@ class BuysellSlider extends PolymerElement {
         else
             return hideBeforeSubmit;
     }
+    _showBall(value) {
+      let pos = value.toString() + '%';
+      let anim = this.$.expected.animate([
+          { left: '50%' },
+          { left: '100%' },
+          { left: 0 },
+      ], {
+          duration: 1000,
+          easing: 'linear', // 'linear', a bezier curve, etc.
+          delay: 500, // milliseconds
+          direction: 'normal', // 'normal', 'reverse', etc.
+          fill: 'forwards'
+      });
 
+      // stops at more accurate position above marker
+     anim.onfinish = () => {
+          this.$.expected.animate([
+              { left: 0 },
+              { left: pos },
+          ], {
+              duration: 2000,
+              easing: 'ease-in-out',
+              direction: 'alternate',
+              fill: 'forwards'
+          });
+          // show price marker right after
+      }
+      return 'ball';
+    }
     _showActualPrice(animatePrice, priceToShow, hideBeforeSubmit) {
         let pos = priceToShow.toString() + '%';
         if (animatePrice) {
@@ -237,7 +278,6 @@ class BuysellSlider extends PolymerElement {
         }
         return 'ball hid';
     }
-
     _hideSlider(buyOption, sellOption) {
         // show double slider
         if (buyOption && sellOption)

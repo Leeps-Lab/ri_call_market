@@ -11,6 +11,12 @@ class Results extends PolymerElement {
                 notify: true,
                 reflectToAttribute: true,
             },
+            expectedValue: {
+                type: Number,
+                computed: '_expectedBondVal(m)',
+                notify: true,
+                reflectToAttribute: true,
+            },
             isDefault: {
                 type: Boolean,
                 computed: '_getDefaultResult(y, g)',
@@ -39,6 +45,18 @@ class Results extends PolymerElement {
             buttonLabel: {
                 type: String,
                 value: 'Continue',
+            },
+            Value: {
+              type: Number,
+              value: 99,
+            },
+            disableSelect: {
+              type: Boolean,
+              value: true,
+            },
+            hidden: {
+              type: Boolean,
+              value: false,
             },
         }
     }
@@ -80,6 +98,10 @@ class Results extends PolymerElement {
                     color: orange;
                     font-weight: bold;
                 }
+                .expected-val {
+                    color: #F06292;
+                    font-weight: bold;
+                }
                 .slider {
                     --price-color: orange;
                 }
@@ -94,7 +116,9 @@ class Results extends PolymerElement {
                     buy-price="[[ buyPrice ]]"
                     sell-price="[[ sellPrice ]]"
                     price-to-show="[[ q ]]"
-                    disable-select
+                    expected-value = "[[expectedValue]]"
+                    disable-select = "[[disableSelect]]"
+                    hidden = "[[hidden]]"
                 ></buysell-slider>
                 <div id="buy-sell">
                     <div class="row">
@@ -102,6 +126,7 @@ class Results extends PolymerElement {
                         <p hidden$="[[ _hidePrice(sellOption) ]]">Your ask: <span class="sell-val">[[ sellPrice ]]</span></p>
                     </div>
                     <h4>
+
                         Bond price: <span class="price-val">[[ q ]]</span>.
                         <span hidden$="[[ sellOption ]]">You [[ _getBuy(bought) ]].</span>
                         <span hidden$="[[ buyOption ]]">You [[ _getSell(sold) ]].</span>
@@ -109,12 +134,9 @@ class Results extends PolymerElement {
                         <span hidden$="[[ _hideBuySell(buyOption, sellOption, sold) ]]">You [[ _getBuy(bought) ]] and [[ _getSell(sold) ]].</span>
                         You now have [[ numBonds ]] bonds.
                     </h4>
-                </div>
-                <div id="substep" class$="[[ _hideResults(hideBeforeSubmit) ]]">
-                    <h3>Default? <span class$="[[ _getDefaultColor(defaultResult) ]]">[[ defaultResult ]]</span></h3>
-                        <h4>Actual bond payment: [[ bondPayment ]]<br/>
-                        Your private info cost: [[ cost ]]</h4>
-                    <h3>Your payoff: [[ _getPayoffFormula(bought, sold, participation_fee, q, cost) ]] = [[ payoff ]]</h3>
+                    <h4>
+                    Expected Bond Price: <span class="expected-val">[[ expectedValue ]]</span>.
+                    </h4>
                 </div>
             </div>
         `;
@@ -157,7 +179,9 @@ class Results extends PolymerElement {
     _getDefaultColor() {
         return this.isDefault ? 'def' : 'non-def';
     }
-
+    _expectedBondVal(m) {
+        return parseFloat((this._getNondefault(this.g) + this.g * m / 100).toFixed(2));
+    }
     _getBuy(bought) {
         return bought ? 'bought' : 'didn\'t buy';
     }
