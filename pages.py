@@ -102,11 +102,10 @@ class EndBlock(Page):
             'Participation_cost': Participation_cost,
             'total_round_payoff': total_round_payoff,
             'total_payoff': round(total_round_payoff  - Participation_cost,2),
-            'round_5': round((self.player.in_round(self.subsession.config.get('round')).round_payoff), 2),
-            'round_4': round((self.player.in_round(self.subsession.config.get('round') - 1).round_payoff), 2),
-            'round_3': round((self.player.in_round(self.subsession.config.get('round') - 2).round_payoff), 2),
-            'round_2': round((self.player.in_round(self.subsession.config.get('round') - 3).round_payoff), 2),
-            'round_1': round((self.player.in_round(self.subsession.config.get('round') - 4).round_payoff), 2),
+            'round_4': round((self.player.in_round(self.subsession.config.get('round')).round_payoff), 2),
+            'round_3': round((self.player.in_round(self.subsession.config.get('round') - 1).round_payoff), 2),
+            'round_2': round((self.player.in_round(self.subsession.config.get('round') - 2).round_payoff), 2),
+            'round_1': round((self.player.in_round(self.subsession.config.get('round') - 3).round_payoff), 2),
 
 
             }
@@ -119,7 +118,7 @@ class pause(Page):
 class payment_page(Page):
     def is_displayed(self):
         try:
-            return self.subsession.config.get('round') == 15
+            return self.subsession.config.get('round') == 12
         except:
             return False
     def vars_for_template(self):
