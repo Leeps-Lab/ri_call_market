@@ -135,7 +135,7 @@ class payment_page(Page):
         ##function to sum total participation fees
         return{
             'player_id': self.player.id_in_group,
-            'total_payoff': round((payment_payoff - participation_fee_total)*.25,2)
+            'total_payoff': round((payment_payoff - participation_fee_total)*.5,2)
         }
 
 
