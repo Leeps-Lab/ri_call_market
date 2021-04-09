@@ -65,6 +65,12 @@ class ResultsPage extends PolymerElement {
                 type: Boolean,
                 value: true,
             },
+            cost_round: {
+              type: Number,
+              computed: '_roundCost(cost)',
+              notify: true,
+              reflectToAttribute: true,
+            },
             isDefault: {
                 type: Boolean,
                 computed: '_getDefaultResult(y, g)',
@@ -143,8 +149,8 @@ class ResultsPage extends PolymerElement {
             <div hidden$="{{_hide(step)}}">
             <h3>Default? <span class$="[[ _getDefaultColor(defaultResult) ]]">[[ defaultResult ]]</span></h3>
                 <h4>Actual bond payment: [[ bondPayment ]]<br/>
-                Your private info cost: [[ cost ]]</h4>
-            <h3>Your payoff: [[ _getPayoffFormula(bought, sold, participation_fee, q, cost) ]] = [[ payoff ]]</h3>
+                Your private info cost: [[ _roundCost(cost) ]]</h4>
+            <h3>Your payoff: [[ _getPayoffFormula(bought, sold, participation_fee, q, cost_round) ]] = [[ payoff ]]</h3>
             </div>
             <paper-button class="btn" on-click="nextStep" hidden$="{{_hide(step)}}" >Continue</paper-button>
        `;
@@ -157,6 +163,9 @@ class ResultsPage extends PolymerElement {
     }
     _hide(step) {
         return this.step != 1;
+    }
+    _roundCost(cost) {
+      return Math.round(cost * 100)/100;
     }
     nextStep() {
         this.dispatchEvent(new CustomEvent('getPolymerData', {
