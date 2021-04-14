@@ -43,6 +43,13 @@
                 }
             });
         });
+       function onsubmitclick() {
+            console.log("onsubmitclick");
+            liveSend("Ready");
+       }
+       function liveRecv() {
+            document.getElementById("form").submit();
+       }
     </script>
 
 {% endblock %}
@@ -69,7 +76,7 @@
                     sell-option
                 {% endif %}
         ></ri-call-market>
-        <button id="next_btn" class="otree-btn-next btn btn-primary">Submit</button>
+        <button type = "button" id="next_btn" class="otree-btn-next btn btn-primary" onclick = "onsubmitclick()">Submit</button>
 
     {% endwith %}
 

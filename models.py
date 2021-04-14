@@ -252,7 +252,12 @@ class Player(BasePlayer):
     bought = models.BooleanField()
     sold = models.BooleanField()
     round_payoff = models.FloatField(initial=100)
-
+    ready = models.BooleanField(initial = False)
+    def live_ready(self, data):
+        print(data)
+        self.ready = True
+        if all(p.ready for p in self.get_others_in_group()):
+            return {0:"Submit"}
     def get_bought(self):
         print('get bought', self.bid_price, self.bought)
         if self.bought is None:
