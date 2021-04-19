@@ -131,6 +131,9 @@ class RICallMarket extends PolymerElement {
                 ></bond-price>
             </div>
         <paper-button class="btn" on-click="nextStep" hidden$="[[ _updateButtonLabel(step)]]">[[ buttonLabel ]]</paper-button>
+        <div class ="step" hidden$="{{_hideStep(step, 4)}}"
+
+        >Please wait for all other players to finish.</div>
        `;
     }
 
