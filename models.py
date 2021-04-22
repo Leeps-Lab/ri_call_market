@@ -45,7 +45,7 @@ def parse_config(config):
 class Constants(BaseConstants):
     name_in_url = 'ri_call_market'
     players_per_group = None
-    num_rounds = 99
+    num_rounds = 5
     def total_rounds(self):
         return self.config.get('total_rounds')
     def round_number(self):
@@ -71,6 +71,13 @@ class Subsession(BaseSubsession):
     sell_option = models.BooleanField()
 
     def creating_session(self):
+        counter = 0
+        filename = "ri_call_market/configs/e.csv"
+        with open(filename, 'r') as csvfile:
+            e_list = [row for row in csv.reader(csvfile)]
+        for player in self.get_players():
+            player.e = float(e_list[self.round_number][counter])
+            counter = counter + 1
         # print('in creating_session', self.round_number)
         config = self.config
         if not self.config or self.round_number > len(config):
@@ -253,6 +260,7 @@ class Player(BasePlayer):
     sold = models.BooleanField()
     round_payoff = models.FloatField(initial=100)
     ready = models.BooleanField(initial = False)
+    e = models.FloatField(initial = 0)
     def live_ready(self, data):
         print(data)
         self.ready = True
