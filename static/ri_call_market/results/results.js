@@ -135,7 +135,7 @@ class Results extends PolymerElement {
                         You now have [[ numBonds ]] bonds.
                     </h4>
                     <h4>
-                    Expected Bond Price: <span class="expected-val">[[ expectedValue ]]</span>.
+                    Expected Bond Value: <span class="expected-val">[[ expectedValue ]]</span>.
                     </h4>
                 </div>
             </div>

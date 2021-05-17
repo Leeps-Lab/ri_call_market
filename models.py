@@ -20,7 +20,8 @@ Your app description
 """
 
 def parse_config(config):
-    with open('ri_call_market/configs/session_config.csv', newline='') as config_file:
+    filename = 'ri_call_market/configs/' + config
+    with open(filename, newline='') as config_file:
         rows = list(csv.DictReader(config_file))
         rounds = []
         for row in rows:
@@ -72,7 +73,7 @@ class Subsession(BaseSubsession):
 
     def creating_session(self):
         counter = 0
-        filename = "ri_call_market/configs/e.csv"
+        filename = "ri_call_market/configs/" + self.session.config['e_file']
         with open(filename, 'r') as csvfile:
             e_list = [row for row in csv.reader(csvfile)]
         for player in self.get_players():
