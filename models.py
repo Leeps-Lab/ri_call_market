@@ -48,7 +48,7 @@ def parse_config(config):
 class Constants(BaseConstants):
     name_in_url = 'ri_call_market'
     players_per_group = None
-    num_rounds = 25
+    num_rounds = 30
     def total_rounds(self):
         return self.config.get('total_rounds')
     def round_number(self):
