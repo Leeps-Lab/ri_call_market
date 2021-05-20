@@ -25,7 +25,7 @@ class block_page(Page):
 
 class MainPage(Page):
     live_method = 'live_ready'
-    timeout_seconds = 99999120
+    timeout_seconds = 120
     form_model = 'player'
     form_fields = ['width', 'cost', 'm_low', 'm_high', 'low_val', 'high_val', 'bid_price', 'ask_price']
 
