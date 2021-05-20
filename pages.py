@@ -122,7 +122,7 @@ class pause(Page):
 class payment_page(Page):
     def is_displayed(self):
         try:
-            return self.subsession.config.get('round') == 5
+            return self.subsession.config.get('round') == 30
         except:
             return False
     def vars_for_template(self):
@@ -138,7 +138,7 @@ class payment_page(Page):
         ##function to sum total participation fees
         return{
             'player_id': self.player.id_in_group,
-            'total_payoff': round((payment_payoff - participation_fee_total)*.09,2)
+            'total_payoff': round((payment_payoff - participation_fee_total)*.08,2)
         }
 
 
