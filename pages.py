@@ -40,6 +40,7 @@ class MainPage(Page):
             'm': self.subsession.get_m(),
             'y': self.subsession.get_y(),
             'q': self.subsession.get_q(),
+            'height': self.subsession.get_height(),
             'expected_value': self.subsession.get_expected_value(),
             'default': self.subsession.get_default(),
             'e': self.player.e,

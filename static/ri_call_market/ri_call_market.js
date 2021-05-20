@@ -28,6 +28,7 @@ class RICallMarket extends PolymerElement {
             m: Number,
             y: Number,
             q: Number,
+            height: Number,
             participation_fee: Number,
             bonds: Number,
             // sets defaults for buy/sell options (false = undefined from python)
@@ -108,6 +109,7 @@ class RICallMarket extends PolymerElement {
                     precision="{{ precision }}"
                     cost="{{ cost }}"
                     disable-select="{{ _disableStep(step, 1) }}"
+                    height = "[[ height ]]"
                 ></info-precision>
             </div>
             <div class="step" hidden$="{{ _hideStep(step, 2) }}">

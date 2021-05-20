@@ -39,14 +39,16 @@ def parse_config(config):
                 'k': float(row['k']) if row.get('k') else float(random.uniform(0, 100)),
                 'm': int(row['m']) if row.get('m') else int(random.uniform(0, 100)),
                 'y': int(row['y']) if row.get('y') else int(random.uniform(0, 100)),
+                'height': int(row['height']) if row.get('height') else int(random.uniform(0, 100)),
                 'q': int(row['q']) if row.get('q') else int(random.uniform(1, 100)), # actual price should be positive
+
             })
     return rounds
 
 class Constants(BaseConstants):
     name_in_url = 'ri_call_market'
     players_per_group = None
-    num_rounds = 5
+    num_rounds = 25
     def total_rounds(self):
         return self.config.get('total_rounds')
     def round_number(self):
@@ -65,6 +67,7 @@ class Subsession(BaseSubsession):
     m = models.IntegerField()
     y = models.IntegerField()
     q = models.IntegerField()
+    height = models.FloatField()
     block_total = models.IntegerField()
     expected_value = models.FloatField()
     default = models.BooleanField()
@@ -107,6 +110,11 @@ class Subsession(BaseSubsession):
             self.y = self.config.get('y')
             self.save()
         return self.y
+    def get_height(self):
+        if self.height is None:
+            self.height = self.config.get('height')
+            self.save()
+        return self.height
 
     def get_q(self):
         if self.q is None:
