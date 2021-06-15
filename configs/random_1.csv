@@ -1,7 +1,7 @@
 round,total_rounds,block_total,pause_page,participation_fee,bonus,initial_bonds,buy_option,sell_option,g,k,m,y,height,q
 1,32,4,False,330.3,False,1,True,True,30,0.1,70,40,3
 2,32,4,False,0,False,1,True,True,30,0.1,46,84,3
-3,32,4,False,0,False,1,True,True,39,0.1,92,81,3
+3,32,4,False,0,False,1,True,True,30,0.1,92,81,3
 4,32,4,False,0,False,1,True,True,30,0.1,82,58,3
 5,32,4,False,172.26,False,1,True,True,70,0.1,73,6,3
 6,32,4,False,0,False,1,True,True,70,0.1,9,60,3
